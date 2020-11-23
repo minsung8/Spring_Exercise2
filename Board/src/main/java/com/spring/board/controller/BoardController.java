@@ -1,8 +1,13 @@
 package com.spring.board.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.spring.board.service.InterBoardService;
 
 /*
 사용자 웹브라우저 요청(View)  ==> DispatcherServlet ==> @Controller 클래스 <==>> Service단(핵심업무로직단, business logic단) <==>> Model단[Repository](DAO, DTO) <==>> myBatis <==>> DB(오라클)           
@@ -33,11 +38,27 @@ Service(서비스)단 객체가 하는 일은 Model단에서 작성된 데이터
 @Controller
 public class BoardController {
 
+	@Autowired     // Type에 따라 알아서 Bean 을 주입해준다.
+	  private InterBoardService service;
+	
 	// 기초 시작 
-	@RequestMapping(value="/test/test_insert.action")
-	public String test_insert() {
+	@RequestMapping(value="/test/test_insert1.action")
+	public String test_insert(HttpServletRequest request) {
 		
-		return "sample/test_insert";
+		int n = service.test_insert();
+		System.out.println("컨트롤러 성공");
+		String message = "";
+		
+		if (n > 0) {
+			message = "데이터 입력 성공";
+		} else {
+			message = "데이터 입력 실패";
+		}
+		
+		request.setAttribute("message", message);
+		request.setAttribute("n", n);
+
+		return "sample/test_insert1";
 		
 		// /WEB-INF/views/test_insert.jsp
 	}
