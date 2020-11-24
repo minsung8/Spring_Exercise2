@@ -1,6 +1,7 @@
----------- 스프링 게시판 -----------
+------ **** 스프링 게시판 **** ------
 
 show user;
+-- USER이(가) "MYMVC_USER"입니다.
 
 create table spring_test
 (no         number
@@ -8,11 +9,9 @@ create table spring_test
 ,writeday   date default sysdate
 );
 
-insert into spring_test(no, name, writeday)
-		values (101, '김민성', default)
-
 select *
 from spring_test;
 
-delete from spring_test;    
+delete from spring_test;
 commit;
+
