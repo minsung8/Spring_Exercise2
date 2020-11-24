@@ -10,5 +10,35 @@
 		insert into spring_test(no, name, writeday)
 		values(101, '김민성', default)
 	</insert>
+	
+	<select id="test_select" resultType="com.spring.board.model.TestVO" >
+		select no, name, to_char(writeday, 'yyyy-mm-dd hh24:mi:ss') as writeday
+		from spring_test
+		order by writeday asc
+	</select>
+	
+	<!-- #### 중요 #### 
+       HashMap 타입으로 매개변수를 받아온 것을 꺼내서 사용할때 
+       1. 데이터로 사용할때는 #{key명} 이고,
+       2. 식별자(테이블명, 컬럼명)로 사용할때는 ${key명} 이고,
+       3. myBatis 에서 제공하는 if 엘리먼트나 choose 엘리먼트 안에서 사용할때는 
+             그냥 <if test="key명"> <when test="key명"> 으로 사용한다. 
+   -->
+	<insert id="test_insert_map" parameterType="HashMap">
+		insert into spring_test(no, name, writeday)
+		values(#{no}, #{name}, default)
+	</insert>
+	
+	
+	<insert id="test_insert_vo" parameterType="com.spring.board.model.TestVO">
+		insert into spring_test(no, name, writeday)
+		values(#{no}, #{name}, default)
+	</insert>
 
 </mapper>
+
+
+
+
+
+

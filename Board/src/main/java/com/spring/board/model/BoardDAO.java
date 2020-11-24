@@ -1,5 +1,10 @@
 package com.spring.board.model;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -23,16 +28,48 @@ public class BoardDAO implements InterBoardDAO {
 	//     3. @Inject    ==> Java 에서 지원하는 어노테이션이다.
     //                       스프링 컨테이너에 담겨진 의존객체를 주입할때 타입을 찾아서 연결(의존객체주입)한다.	
 	
-	@Autowired
-	private SqlSessionTemplate abc;
+	@Resource
+	private SqlSessionTemplate sqlsession;			// 로컬 디비에 연결
 	// Type 에 따라 Spring 컨테이너가 알아서 root-context.xml 에 생성된 org.mybatis.spring.SqlSessionTemplate 의 bean 을  abc 에 주입시켜준다. 
-    // 그러므로 abc 는 null 이 아니다.
-
+    // 그러므로 sqlsession 는 null 이 아니다.
+	
+	@Resource
+	private SqlSessionTemplate sqlsession2;			// 원격 디비에 연결
+	// Type 에 따라 Spring 컨테이너가 알아서 root-context.xml 에 생성된 org.mybatis.spring.SqlSessionTemplate 의 bean 을  abc 에 주입시켜준다. 
+    // 그러므로 sqlsession2 는 null 이 아니다.
+	
+	/*
+	 * @Autowired private SqlSessionTemplate abc; // Type 에 따라 Spring 컨테이너가 알아서
+	 * root-context.xml 에 생성된 org.mybatis.spring.SqlSessionTemplate 의 bean 을 abc 에
+	 * 주입시켜준다. // 그러므로 abc 는 null 이 아니다.
+	 */
 	
 	// spring_test 테이블에 insert 하기 
 	@Override
 	public int test_insert() {
-		int n = abc.insert("board.test_insert");
+		int n = sqlsession.insert("board.test_insert");
+		return n;
+	}
+
+	@Override
+	public List<TestVO> test_select() {
+
+		List<TestVO> testvoList = sqlsession.selectList("board.test_select");
+		
+		return testvoList;
+	}
+
+	@Override
+	public int test_insert(Map<String, String> paraMap) {
+		
+		int n = sqlsession.insert("board.test_insert_map", paraMap);
+		
+		return n;
+	}
+
+	@Override
+	public int test_insert(TestVO vo) {
+		int n = sqlsession.insert("board.test_insert_vo", vo);
 		return n;
 	}
 	

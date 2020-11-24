@@ -1,9 +1,13 @@
 package com.spring.board.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.board.model.InterBoardDAO;
+import com.spring.board.model.TestVO;
 
 //=== #31. Service 선언 === 
 //트랜잭션 처리를 담당하는곳 , 업무를 처리하는 곳, 비지니스(Business)단
@@ -32,6 +36,34 @@ public class BoardService implements InterBoardService {
 	@Override
 	public int test_insert() {
 		int n = dao.test_insert();
+		return n;
+	}
+
+
+	@Override
+	public List<TestVO> test_select() {
+		
+		List<TestVO> testvoList = dao.test_select();
+		
+		return testvoList;
+	}
+
+
+	@Override
+	public int test_insert(Map<String, String> paraMap) {
+		
+		int n = dao.test_insert(paraMap);
+		
+		return n;
+		
+	}
+
+	
+	@Override
+	public int test_insert(TestVO vo) {
+		
+		int n = dao.test_insert(vo);
+		
 		return n;
 	}
 	

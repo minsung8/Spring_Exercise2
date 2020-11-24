@@ -1,12 +1,16 @@
 package com.spring.board.controller;
 
+import java.util.*;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.spring.board.model.TestVO;
 import com.spring.board.service.InterBoardService;
 
 /*
@@ -61,11 +65,71 @@ public class BoardController {
 		request.setAttribute("message", message);
 		request.setAttribute("n", n);
 		
-		return "sample/test_insert";
+		return "sample/test_insert";	
 	//  /WEB-INF/views/sample/test_insert.jsp 페이지를 만들어야 한다.
 	}
 	
+	@RequestMapping(value="/test/test_select.action")
+	public String test_select(HttpServletRequest request) {
+		
+		List<TestVO> testvoList = service.test_select();
+		
+		request.setAttribute("testvoList", testvoList);
+		
+		return "sample/test_select";
+	}
 	
+	// @RequestMapping(value="/test/test_form.action", method= {RequestMethod.POST})	=> POST 요청만 허락
+	// @RequestMapping(value="/test/test_form.action", method= {RequestMethod.GET})		=> GET 방식만 허락
+	@RequestMapping(value="/test/test_form.action")
+	public String test_form(HttpServletRequest request) {
+		
+		String method = request.getMethod();
+		
+		if ("GET".equalsIgnoreCase(method)) {
+			return "sample/test_form";
+		} else {
+			String no = request.getParameter("no");
+			String name = request.getParameter("name");
+			
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("no", no);
+			paraMap.put("name", name);
+			
+			int n = service.test_insert(paraMap);
+			
+			if (n == 1) {
+				return "redirect:/test/test_select.action";	// 페이지 이동
+			} else {
+				return "redirect:/test/test_form.action";	// 페이지 이동
+			}
+			
+		}
+		
+	}
+		
+		// @RequestMapping(value="/test/test_form.action", method= {RequestMethod.POST})	=> POST 요청만 허락
+		// @RequestMapping(value="/test/test_form.action", method= {RequestMethod.GET})		=> GET 방식만 허락
+		@RequestMapping(value="/test/test_form2.action")
+		public String test_form2(HttpServletRequest request, TestVO vo) {
+			
+			String method = request.getMethod();
+			
+			if ("GET".equalsIgnoreCase(method)) {
+				return "sample/test_form2";
+			} else {
+				
+				int n = service.test_insert(vo);
+				
+				if (n == 1) {
+					return "redirect:/test/test_select.action";	// 페이지 이동
+				} else {
+					return "redirect:/test/test_form2.action";	// 페이지 이동
+				}
+				
+			}
+					
+		}
 	
 	// ============= ***** 기초끝 ***** ============= //
 	
