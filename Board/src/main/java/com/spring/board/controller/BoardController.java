@@ -4,11 +4,15 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.model.TestVO;
 import com.spring.board.service.InterBoardService;
@@ -130,12 +134,118 @@ public class BoardController {
 			}
 					
 		}
-	
+		
 	// ============= ***** 기초끝 ***** ============= //
+		
+		@RequestMapping(value="/test/test_form3.action", method= {RequestMethod.GET})		// GET 방식만 허용
+		public String test_form3() {
+
+			return "sample/test_form3";
+					
+		}
+		
+		
+		/*
+	    @ResponseBody 란?
+	     	메소드에 @ResponseBody Annotation이 되어 있으면 return 되는 값은 View 단 페이지를 통해서 출력되는 것이 아니라 
+	    	return 되어지는 값 그 자체를 웹브라우저에 바로 직접 쓰여지게 하는 것이다. 일반적으로 JSON 값을 Return 할때 많이 사용된다. 
+	    */
+		
+		@ResponseBody
+		@RequestMapping(value="/test/ajax_insert.action",  method= {RequestMethod.POST})
+		public String ajax_insert(HttpServletRequest request) {
+			
+				
+			String no = request.getParameter("no");
+			String name = request.getParameter("name");
+			
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("no", no);
+			paraMap.put("name", name);
+			
+			int n = service.test_insert(paraMap);
+			
+			JSONObject jsonObj = new JSONObject();
+			
+			jsonObj.put("n", n);
+			
+			return jsonObj.toString();
+		}
+
+		
+		/*
+	    @ResponseBody 란?
+	     	메소드에 @ResponseBody Annotation이 되어 있으면 return 되는 값은 View 단 페이지를 통해서 출력되는 것이 아니라 
+	    	return 되어지는 값 그 자체를 웹브라우저에 바로 직접 쓰여지게 하는 것이다. 일반적으로 JSON 값을 Return 할때 많이 사용된다.  
+	   
+	   		>>> 스프링에서 json 또는 gson을 사용한 ajax 구현시 데이터를 화면에 출력해 줄때 한글로 된 데이터가 '?'로 출력되어 한글이 깨지는 현상이 있다. 
+	               	이것을 해결하는 방법은 @RequestMapping 어노테이션의 속성 중 produces="text/plain;charset=UTF-8" 를 사용하면 
+	               	응답 페이지에 대한 UTF-8 인코딩이 가능하여 한글 깨짐을 방지 할 수 있다. <<< 
+		 */
+		@ResponseBody		// view 페이지가 필요 없음
+		@RequestMapping(value="/test/ajax_select.action", produces="text/plain;charset=UTF-8")
+		public String ajax_select() {
+			
+			
+			List<TestVO> testvoList = service.test_select();
+			
+			JSONArray jsonArr = new JSONArray();
+			
+			if (testvoList != null) {
+				for (TestVO vo : testvoList) {
+					JSONObject jsonObj = new JSONObject();
+					jsonObj.put("no", vo.getNo());
+					jsonObj.put("name", vo.getName());
+					jsonObj.put("writeday", vo.getWriteday());
+					
+					jsonArr.put(jsonObj);
+				}
+					
+			}
+			
+			return jsonArr.toString();
+		}
+		
+		
+		// 리턴타입을 string 대신에 modelandview 사용
+		@RequestMapping(value="/test/modelAndview_insert.action")
+		public ModelAndView modelAndview_insert(ModelAndView mav, HttpServletRequest request) {
+			
+			String method = request.getMethod();
+			
+			if ("GET".equalsIgnoreCase(method)) {
+				mav.setViewName("/sample/test_form4");
+			} else {
+				String no = request.getParameter("no");
+				String name = request.getParameter("name");
+				
+				Map<String, String> paraMap = new HashMap<>();
+				paraMap.put("no", no);
+				paraMap.put("name", name);
+				
+				int n = service.test_insert(paraMap);
+				
+				if (n == 1) { 
+					
+					/*
+					
+					List<TestVO> testvoList = service.test_select();
+					
+					mav.addObject("testvoList", testvoList);
+					
+					mav.setViewName("sample/test_select");		// view 단 페이지의 파일명 지정하기 
+					 
+					*/
+					//======================= 또는 페이지 이동 ======================
+					
+					mav.setViewName("redirect:/test/test_select.action");
+				}
+				
+			}
+
+			return mav;
+		}
+		
 	
 }
-
-
-
-
 
