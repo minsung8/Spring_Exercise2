@@ -38,6 +38,11 @@ public class BoardDAO implements InterBoardDAO {
 	// Type 에 따라 Spring 컨테이너가 알아서 root-context.xml 에 생성된 org.mybatis.spring.SqlSessionTemplate 의 bean 을  abc 에 주입시켜준다. 
     // 그러므로 sqlsession2 는 null 이 아니다.
 	
+	@Resource
+	private SqlSessionTemplate sqlsession3;			// 원격 디비에 연결
+	// Type 에 따라 Spring 컨테이너가 알아서 root-context.xml 에 생성된 org.mybatis.spring.SqlSessionTemplate 의 bean 을  abc 에 주입시켜준다. 
+    // 그러므로 sqlsession2 는 null 이 아니다.
+	
 	/*
 	 * @Autowired private SqlSessionTemplate abc; // Type 에 따라 Spring 컨테이너가 알아서
 	 * root-context.xml 에 생성된 org.mybatis.spring.SqlSessionTemplate 의 bean 을 abc 에
@@ -71,6 +76,20 @@ public class BoardDAO implements InterBoardDAO {
 	public int test_insert(TestVO vo) {
 		int n = sqlsession.insert("board.test_insert_vo", vo);
 		return n;
+	}
+		
+	@Override
+	public List<Map<String, String>> test_employees() {
+		List<Map<String, String>> empList = sqlsession3.selectList("hr.test_employees");
+		return empList;
+	}
+
+	@Override
+	public List<String> getImagefilenameList() {
+		
+		List<String> imagefilenameList = sqlsession.selectList("board.getImagefilenameList");
+		
+		return imagefilenameList;
 	}
 	
 	

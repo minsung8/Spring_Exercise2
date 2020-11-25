@@ -246,6 +246,69 @@ public class BoardController {
 			return mav;
 		}
 		
+
+		// == 데이터테이블즈(datatables) -- datatables 1.10.19 기반으로 작성  == //
+		@RequestMapping(value="/test/employees.action")
+		public ModelAndView test_employees(ModelAndView mav) {
+		   
+		   List<Map<String,String>> empList = service.test_employees();
+		   
+		   mav.addObject("empList", empList);
+		   mav.setViewName("sample/employees");
+		   //    /WEB-INF/views/sample/employees.jsp 파일을 생성한다.
+		   
+		   return mav;
+		}
+
+		@RequestMapping(value="/test/employees_tiles1.action")
+		public ModelAndView employees_tiles1(ModelAndView mav) {
+		   
+		   List<Map<String,String>> empList = service.test_employees();
+		   
+		   mav.addObject("empList", empList);
+		   mav.setViewName("sample/employees.tiles1");
+		   //   /WEB-INF/views/tiles1/sample/employees.jsp 파일을 생성한다.
+		   
+		   return mav;
+		}
+
+		@RequestMapping(value="/test/employees_tiles2.action")
+		public ModelAndView employees_tiles2(ModelAndView mav) {
+		   
+		   List<Map<String,String>> empList = service.test_employees();
+		   
+		   mav.addObject("empList", empList);
+		   mav.setViewName("sample/employees.tiles2");
+		   //   /WEB-INF/views/tiles2/sample/employees.jsp 파일을 생성한다. 
+		   
+		   return mav;
+		}
+		
+		
+		// #36. 메인 페이지 요청
+		@RequestMapping(value="/index.action")
+		public ModelAndView index(ModelAndView mav) {
+			
+			List<String> imgfilenameList = service.getImagefilenameList();
+			mav.addObject("imgfilenameList", imgfilenameList);
+			mav.setViewName("main/index.tiles1");
+			
+			
+			return mav;
+		}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 

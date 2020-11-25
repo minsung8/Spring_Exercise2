@@ -66,5 +66,24 @@ public class BoardService implements InterBoardService {
 		
 		return n;
 	}
+
+
+	@Override
+	public List<Map<String, String>> test_employees() {
+
+		List<Map<String, String>> empList = dao.test_employees();
+		
+		return empList;
+	}
+
+
+	@Override
+	public List<String> getImagefilenameList() {
+		
+		List<String> imagefilenameList = dao.getImagefilenameList();
+		
+		return imagefilenameList;
+		
+	}
 	
 }

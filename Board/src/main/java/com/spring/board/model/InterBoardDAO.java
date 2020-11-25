@@ -12,6 +12,10 @@ public interface InterBoardDAO {
 	int test_insert(Map<String, String> paraMap);
 
 	int test_insert(TestVO vo);
+
+	List<Map<String, String>> test_employees();
+
+	List<String> getImagefilenameList();
 	
 	
 	

@@ -15,4 +15,8 @@ public interface InterBoardService {
 
 	int test_insert(TestVO vo);		// model단(BoardDAO)에 존재하는 메소드( Map<String, String> paraMap )를 호출 한다.
 
+	List<Map<String, String>> test_employees();
+
+	List<String> getImagefilenameList();
+
 }

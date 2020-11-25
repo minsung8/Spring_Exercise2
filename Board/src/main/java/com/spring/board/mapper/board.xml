@@ -34,6 +34,14 @@
 		insert into spring_test(no, name, writeday)
 		values(#{no}, #{name}, default)
 	</insert>
+	
+	<!-- ================================================================ -->
+	<!-- #39. 메인페이지용 이미지 파일을 가져오기 -->
+	<select id="getImagefilenameList" resultType="String">
+		select imgfilename
+		from tbl_main_image
+		order by imgno asc
+	</select>
 
 </mapper>
 
