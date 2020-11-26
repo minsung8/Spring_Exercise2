@@ -16,6 +16,11 @@ public interface InterBoardDAO {
 	List<Map<String, String>> test_employees();
 
 	List<String> getImagefilenameList();
+
+	MemberVO getLoginMember(Map<String, String> paraMap);
+	int updateIdle(String userid);
+
+	int add(BoardVO boardvo);		// 게시판 글쓰기
 	
 	
 	

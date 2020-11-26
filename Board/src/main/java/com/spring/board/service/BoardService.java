@@ -1,12 +1,17 @@
 package com.spring.board.service;
 
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.spring.board.common.AES256;
+import com.spring.board.model.BoardVO;
 import com.spring.board.model.InterBoardDAO;
+import com.spring.board.model.MemberVO;
 import com.spring.board.model.TestVO;
 
 //=== #31. Service 선언 === 
@@ -30,7 +35,11 @@ public class BoardService implements InterBoardService {
 	private InterBoardDAO dao;
 	// Type 에 따라 Spring 컨테이너가 알아서 bean 으로 등록된 com.spring.model.BoardDAO 의 bean 을  dao 에 주입시켜준다. 
     // 그러므로 dao 는 null 이 아니다.
-
+	
+	// === #45. 양방향 암호화 알고리즘인 AES256 를 사용하여 복호화 하기 위한 클래스 의존객체 주입하기(DI: Dependency Injection) ===
+	@Autowired
+	private AES256 aes;
+	// servlet-context.xml 파일에서 bean으로 등록시켜주었음.
 	
 	// model단(BoardDAO)에 존재하는 메소드( test_insert() )를 호출 한다.
 	@Override
@@ -38,7 +47,6 @@ public class BoardService implements InterBoardService {
 		int n = dao.test_insert();
 		return n;
 	}
-
 
 	@Override
 	public List<TestVO> test_select() {
@@ -84,6 +92,49 @@ public class BoardService implements InterBoardService {
 		
 		return imagefilenameList;
 		
+	}
+
+	// == #43. 로그인 처리하기 == //
+	@Override
+	public MemberVO getLoginMember(Map<String, String> paraMap) {
+		
+		MemberVO  loginuser = dao.getLoginMember(paraMap);
+		
+		// === #48. aes 의존객체를 사용하여 로그인 되어진 사용자(loginuser)의 이메일 값을 복호화 하도록 한다. === 
+		if ( loginuser != null && loginuser.getPwdchangegap() >= 3) {
+			loginuser.setRequirePwdChange(true);
+		}
+		
+		
+		if ( loginuser != null && loginuser.getLastlogingap() >= 12) {
+			
+			loginuser.setIdle(1);
+			
+			int n = dao.updateIdle(paraMap.get("userid"));
+		
+		}
+		
+		if ( loginuser != null ) {
+			String email = "";
+			try {
+				email = aes.decrypt(loginuser.getEmail());
+			} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+				e.printStackTrace();
+			}
+			loginuser.setEmail( email );
+		
+		}
+		
+		return loginuser;
+	}
+
+	// === #55. 글쓰기(파일첨부가 없는 글쓰기) === //
+	@Override
+	public int add(BoardVO boardvo) {
+
+		int n = dao.add(boardvo);
+		
+		return n;
 	}
 	
 }

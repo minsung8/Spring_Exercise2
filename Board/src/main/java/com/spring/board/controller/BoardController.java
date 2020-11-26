@@ -3,6 +3,7 @@ package com.spring.board.controller;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.board.common.Sha256;
+import com.spring.board.model.BoardVO;
+import com.spring.board.model.MemberVO;
 import com.spring.board.model.TestVO;
 import com.spring.board.service.InterBoardService;
 
@@ -284,7 +288,6 @@ public class BoardController {
 		   return mav;
 		}
 		
-		
 		// #36. 메인 페이지 요청
 		@RequestMapping(value="/index.action")
 		public ModelAndView index(ModelAndView mav) {
@@ -296,10 +299,164 @@ public class BoardController {
 			
 			return mav;
 		}
-	
+		
+		// #40. 로그인 폼 페이지 요청
+		@RequestMapping(value="/login.action", method={RequestMethod.GET})
+		public ModelAndView login(ModelAndView mav) {
+			
+			mav.setViewName("login/loginform.tiles1");
+			//
+			
+			return mav;
+			
+		}
+		
+		// === #41. 로그인 처리하기 === // 
+		   @RequestMapping(value="/loginEnd.action", method= {RequestMethod.POST}) 
+		   public ModelAndView loginEnd(ModelAndView mav, HttpServletRequest request) {
+		      
+		      String userid = request.getParameter("userid");
+		      String pwd = request.getParameter("pwd");
+		      
+		      Map<String,String> paraMap = new HashMap<>();
+		      paraMap.put("userid", userid);
+		      paraMap.put("pwd", Sha256.encrypt(pwd));
+		      
+		      MemberVO loginuser = service.getLoginMember(paraMap); 
+		      
+		      if(loginuser == null) { // 로그인 실패시 
+		         String message = "아이디 또는 암호가 틀립니다.";
+		         String loc = "javascript:history.back()";
+		         
+		         mav.addObject("message", message);
+		         mav.addObject("loc", loc);
+		         
+		         mav.setViewName("msg");
+		         //   /WEB-INF/views/msg.jsp 파일을 생성한다.
+		      }
+		      
+		      else { // 아이디와 암호가 존재하는 경우 
+		         
+		         if(loginuser.getIdle() == 1) { // 로그인 한지 1년이 경과한 경우 
+		            String message = "로그인을 한지 1년지 지나서 휴면상태로 되었습니다. 관리자가에게 문의 바랍니다.";
+		            String loc = request.getContextPath()+"/index.action";
+		            // 원래는 위와같이 index.action 이 아니라 휴면인 계정을 풀어주는 페이지로 잡아주어야 한다.
+		            
+		            mav.addObject("message", message);
+		            mav.addObject("loc", loc);
+		            mav.setViewName("msg");
+		         }
+		         
+		         else { // 로그인 한지 1년 이내인 경우 
+		         
+		            // !!!! session(세션) 이라는 저장소에 로그인 되어진 loginuser 을 저장시켜두어야 한다.!!!! //
+		            // session(세션) 이란 ? WAS 컴퓨터의 메모리(RAM)의 일부분을 사용하는 것으로 접속한 클라이언트 컴퓨터에서 보내온 정보를 저장하는 용도로 쓰인다. 
+		            // 클라이언트 컴퓨터가 WAS 컴퓨터에 웹으로 접속을 하기만 하면 무조건 자동적으로 WAS 컴퓨터의 메모리(RAM)의 일부분에 session 이 생성되어진다.
+		            // session 은 클라이언트 컴퓨터 웹브라우저당 1개씩 생성되어진다. 
+		            // 예를 들면 클라이언트 컴퓨터가 크롬웹브라우저로 WAS 컴퓨터에 웹으로 연결하면 session이 하나 생성되어지고 ,
+		            // 또 이어서 동일한 클라이언트 컴퓨터가 엣지웹브라우저로 WAS 컴퓨터에 웹으로 연결하면 또 하나의 새로운 session이 생성되어진다. 
+		            /*
+		                  -------------
+		                  | 클라이언트    |             ---------------------
+		                  | A 웹브라우저 | ----------- |   WAS 서버              |
+		                  -------------             |                  |
+		                                            |  RAM (A session) |
+		                  --------------            |      (B session) | 
+		                  | 클라이언트       |           |                  |
+		                  | B 웹브라우저   | ---------- |                  |
+		                  ---------------           --------------------
+		                  
+		              !!!! 세션(session)이라는 저장 영역에 loginuser 를 저장시켜두면
+		                   Command.properties 파일에 기술된 모든 클래스 및  모든 JSP 페이지(파일)에서 
+		                        세션(session)에 저장되어진 loginuser 정보를 사용할 수 있게 된다. !!!! 
+		                        그러므로 어떤 정보를 여러 클래스 또는 여러 jsp 페이지에서 공통적으로 사용하고자 한다라면
+		                        세션(session)에 저장해야 한다.!!!!          
+		             */
+		            
+		            HttpSession session = request.getSession(); 
+		            // 메모리에 생성되어져 있는 session을 불러오는 것이다.
+		            
+		            session.setAttribute("loginuser", loginuser);
+		            // session(세션)에 로그인 되어진 사용자 정보인 loginuser 을 키이름을 "loginuser" 으로 저장시켜두는 것이다.
+		            
+		            if(loginuser.isRequirePwdChange() == true) { // 암호를 마지막으로 변경한것이 3개월이 경과한 경우 
+		               String message = "비밀번호를 변경하신지 3개월이 지났습니다. 암호를 변경하세요!!";
+		               String loc = request.getContextPath()+"/index.action";
+		               // 원래는 위와같이 index.action 이 아니라 사용자의 암호를 변경해주는 페이지로 잡아주어야 한다.
+		               
+		               mav.addObject("message", message);
+		               mav.addObject("loc", loc);
+		               mav.setViewName("msg");
+		            }
+		            
+		            else { // 암호를 마지막으로 변경한것이 3개월 이내인 경우 
+		               
+		               // 막바로 페이지 이동을 시킨다. 
+		               
+		               // 특정 제품상세 페이지를 보았을 경우 로그인을 하면 시작페이지로 가는 것이 아니라
+		               // 방금 보았던 특정 제품상세 페이지로 가기 위한 것이다.
+		               String goBackURL = (String) session.getAttribute("goBackURL");
+		               // shop/prodView.up?pnum=66
+		               // 또는 null
+		               
+		               if(goBackURL != null) {
+		                  mav.setViewName("redirect:/"+goBackURL);
+		                  session.removeAttribute("goBackURL"); // 세션에서 반드시 제거해주어야 한다.
+		               }
+		               else {
+		                  mav.setViewName("redirect:/index.action");   
+		               }
+		            
+		            }   
+		            
+		          }
+		         
+		      }
+		      
+		      return mav;
+		   }
+		   
+		   
+	// === #50. 로그아웃 처리하기 === //
+		   
+		@RequestMapping(value="/logout.action")
+		public ModelAndView logout(ModelAndView mav, HttpServletRequest request) {
+			
+			HttpSession session = request.getSession(); // 세션불러오기
+			session.invalidate();
+			
+			String message = "로그아웃 되었습니다";
+            String loc = request.getContextPath()+"/index.action";
+			
+			mav.addObject("message", message);
+            mav.addObject("loc", loc);
+            mav.setViewName("msg");
+            
+            return mav;
+		}
+		
+		
+		// === #51. 게시판 글쓰기 폼페이지 요청 === //
+		@RequestMapping(value="/add.action")
+		public ModelAndView add(ModelAndView mav, HttpServletRequest request) {
+
+			mav.setViewName("board/add.tiles1");
+            
+            return mav;
+            
+		}
+		
+		// === #54. 게시판 글쓰기 완료 요청 === //
+		@RequestMapping(value="/addEnd.action", method= {RequestMethod.POST} )
+		public String addEnd(BoardVO boardvo) {
+
+			int n = service.add(boardvo);
+			
+            return "redirect:/list.action";
+            
+		}
+		
 }
-
-
 
 
 

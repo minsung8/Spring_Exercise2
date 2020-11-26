@@ -42,7 +42,37 @@
 		from tbl_main_image
 		order by imgno asc
 	</select>
-
+	
+	<!-- === #47. 로그인 처리하기 === -->
+	<select id="getLoginMember" resultType="com.spring.board.model.MemberVO" parameterType="HashMap">
+		select userid, name, email, mobile, postcode, address, detailaddress, extraaddress, gender
+	     , birthyyyy, birthmm, birthdd, coin, point, registerday, pwdchangegap
+	     ,nvl( lastlogingap, trunc( months_between(sysdate, registerday) )) as lastlogingap
+		from
+		(
+		select userid, name, email, mobile, postcode, address, detailaddress, extraaddress, gender
+		     , substr(birthday,1,4) as birthyyyy, substr(birthday,6,2) as birthmm, substr(birthday,9) as birthdd
+		     , coin, point, to_char(registerday,'yyyy-mm-dd') as registerday
+		     , trunc( months_between(sysdate, lastpwdchangeddate) ) as pwdchangegap
+		from tbl_member
+		where status = 1 and userid = #{userid} and pwd = #{pwd}  
+		) M 
+		cross join 
+		(
+		select trunc( months_between(sysdate, max(logindate)) ) as lastlogingap 
+		from tbl_loginhistory 
+		where fk_userid = #{userid}
+		) H
+	</select>
+	<update id="updateIdle" parameterType="String">
+		update tbl_member set idle = 1
+		where userid = #{userid}
+	</update>
+	
+	<insert id="add" parameterType="com.spring.board.model.BoardVO">       
+       insert into tbl_board(seq, fk_userid, name, subject, content, pw, readCount, regDate, status)
+       values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, default, default, default) 
+	</insert>
 </mapper>
 
 

@@ -3,6 +3,8 @@ package com.spring.board.service;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.board.model.BoardVO;
+import com.spring.board.model.MemberVO;
 import com.spring.board.model.TestVO;
 
 public interface InterBoardService {
@@ -18,5 +20,10 @@ public interface InterBoardService {
 	List<Map<String, String>> test_employees();
 
 	List<String> getImagefilenameList();
+
+	MemberVO getLoginMember(Map<String, String> paraMap);	// 로그인 처리
+
+	int add(BoardVO boardvo);	// 게시판 글쓰기
+
 
 }

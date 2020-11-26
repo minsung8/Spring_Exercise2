@@ -92,6 +92,33 @@ public class BoardDAO implements InterBoardDAO {
 		return imagefilenameList;
 	}
 	
+	// ==#46. 로그인 처리 === ///
+	@Override
+	public MemberVO getLoginMember(Map<String, String> paraMap) {
+		
+		MemberVO loginuser = sqlsession.selectOne("board.getLoginMember", paraMap);
+		return loginuser;
+		
+	}
+
+	@Override
+	public int updateIdle(String userid) {
+		
+		int n = sqlsession.update("board.updateIdle", userid);
+		
+		return n;
+		
+	}
+
+	@Override
+	public int add(BoardVO boardvo) {
+
+		int n = sqlsession.insert("board.add", boardvo);
+		
+		return n;
+	}
+	
+	
 	
 	
 	
