@@ -25,5 +25,9 @@ public interface InterBoardService {
 
 	int add(BoardVO boardvo);	// 게시판 글쓰기
 
+	List<BoardVO> boardListNoSearch();
+
+	BoardVO getView(String seq, String userid, String fk_userid);
+
 
 }

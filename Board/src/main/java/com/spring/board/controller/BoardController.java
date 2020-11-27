@@ -3,6 +3,7 @@ package com.spring.board.controller;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
@@ -436,15 +437,15 @@ public class BoardController {
 		}
 		
 		
-		// === #51. 게시판 글쓰기 폼페이지 요청 === //
-		@RequestMapping(value="/add.action")
-		public ModelAndView add(ModelAndView mav, HttpServletRequest request) {
-
-			mav.setViewName("board/add.tiles1");
-            
-            return mav;
-            
-		}
+		// === #51. 게시판 글쓰기 폼페이지 요청 === // 
+		   @RequestMapping(value="/add.action")
+		   public ModelAndView requiredLogin_add(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		      
+		      mav.setViewName("board/add.tiles1");
+		      //   /WEB-INF/views/tiles1/board/add.jsp 파일을 생성한다.
+		      
+		      return mav;
+		   }
 		
 		// === #54. 게시판 글쓰기 완료 요청 === //
 		@RequestMapping(value="/addEnd.action", method= {RequestMethod.POST} )
@@ -452,8 +453,55 @@ public class BoardController {
 
 			int n = service.add(boardvo);
 			
-            return "redirect:/list.action";
+			if ( n == 1) {
+				return "redirect:/list.action";
+			} else {
+				return "redirect:/add.action";
+			}
+			
             
+		}
+		
+		// === 글 목록보기 페이지 요청 === //
+		@RequestMapping(value="/list.action")
+		public ModelAndView list (ModelAndView mav) {
+			
+			List<BoardVO> boardList = null;
+			
+			boardList = service.boardListNoSearch();
+
+			mav.addObject("boardList", boardList);
+			mav.setViewName("board/list.tiles1");
+
+			
+			return mav;
+		}
+		
+		// === 글 1개 보여주기 페이지 요청 === //
+		@RequestMapping(value="/view.action")
+		public ModelAndView view(HttpServletRequest request, ModelAndView mav) {
+			
+			String seq = request.getParameter("seq");
+			String fk_userid = request.getParameter("fk_userid");
+			
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+			
+			String login_userid = null;
+			
+			if (loginuser != null) {
+				login_userid = loginuser.getUserid();
+			}
+			
+			
+			BoardVO boardvo = null;
+			
+			boardvo = service.getView(seq, login_userid, fk_userid);
+			
+			mav.addObject("boardvo", boardvo);
+			mav.setViewName("board/view.tiles1");
+			
+			return mav;
 		}
 		
 }

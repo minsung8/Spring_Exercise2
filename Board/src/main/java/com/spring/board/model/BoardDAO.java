@@ -117,6 +117,14 @@ public class BoardDAO implements InterBoardDAO {
 		
 		return n;
 	}
+
+	@Override
+	public List<BoardVO> boardListNoSearch() {
+
+		List<BoardVO> boardList = sqlsession.selectList("board.boardListNoSearch");
+		
+		return boardList;
+	}
 	
 	
 	

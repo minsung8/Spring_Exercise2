@@ -21,6 +21,8 @@ public interface InterBoardDAO {
 	int updateIdle(String userid);
 
 	int add(BoardVO boardvo);		// 게시판 글쓰기
+
+	List<BoardVO> boardListNoSearch();		// 글 전체 목록 보여주기
 	
 	
 	

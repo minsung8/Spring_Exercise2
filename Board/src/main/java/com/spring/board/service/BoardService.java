@@ -136,5 +136,26 @@ public class BoardService implements InterBoardService {
 		
 		return n;
 	}
+
+	@Override
+	public List<BoardVO> boardListNoSearch() {
+		List<BoardVO> boardList = dao.boardListNoSearch();
+		
+		return boardList;
+	}
+
+	@Override
+	public BoardVO getView(String seq, String login_userid, String fk_userid) {
+
+		if (login_userid != null && !login_userid.equals(fk_userid)) {
+			
+			dao.setAddReadCount(seq);
+			
+		}
+		
+		BoardVO boardvo = dao.getView(seq);
+			
+		return null;
+	}
 	
 }

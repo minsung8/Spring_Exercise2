@@ -73,6 +73,14 @@
        insert into tbl_board(seq, fk_userid, name, subject, content, pw, readCount, regDate, status)
        values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, default, default, default) 
 	</insert>
+	
+	<select id="boardListNoSearch" resultType="com.spring.board.model.BoardVO">
+		select seq, fk_userid, name, subject  
+            , readcount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+       from tbl_board
+       where status = 1
+       order by seq desc
+	</select>
 </mapper>
 
 
