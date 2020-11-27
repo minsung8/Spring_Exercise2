@@ -31,9 +31,9 @@
 	   
     });// end of $(document).ready(function(){})-------------------
     
-    function goView(seq, fk_userid) {
+    function goView(seq) {
     	
-    	location.href="<%= ctxPath%>/view.action?seq="+seq+"&fk_userid=" + fk_userid;
+    	location.href="<%= ctxPath%>/view.action?seq="+seq;
     	
     }
          
@@ -55,7 +55,7 @@
             <td align="center">${boardvo.seq}
             </td>
             <td align="left">
-                <span class="subject" onclick="goView('${boardvo.seq}', '${board.fk_userid}')">${boardvo.subject}</span>
+                <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>
             </td>
             <td align="center">${boardvo.name}</td>
             <td align="center">${boardvo.regDate}</td>

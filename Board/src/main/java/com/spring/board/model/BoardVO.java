@@ -21,8 +21,6 @@ public class BoardVO {
 	
 	public BoardVO() {};
 	
-	
-	
 	public BoardVO(String seq, String fk_userid, String name, String subject, String content, String pw,
 			String readCount, String regDate, String status, String previousseq, String previoussubject, String nextseq,
 			String nextsubject) {

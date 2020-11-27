@@ -482,7 +482,7 @@ public class BoardController {
 		public ModelAndView view(HttpServletRequest request, ModelAndView mav) {
 			
 			String seq = request.getParameter("seq");
-			String fk_userid = request.getParameter("fk_userid");
+			
 			
 			HttpSession session = request.getSession();
 			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
@@ -495,9 +495,9 @@ public class BoardController {
 			
 			
 			BoardVO boardvo = null;
-			
-			boardvo = service.getView(seq, login_userid, fk_userid);
-			
+
+			boardvo = service.getView(seq, login_userid);
+
 			mav.addObject("boardvo", boardvo);
 			mav.setViewName("board/view.tiles1");
 			

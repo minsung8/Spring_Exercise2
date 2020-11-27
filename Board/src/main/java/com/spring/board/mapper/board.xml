@@ -81,6 +81,33 @@
        where status = 1
        order by seq desc
 	</select>
+	
+	<update id="setAddReadCount" parameterType="String">
+		update tbl_board set readCount = readCount + 1
+		where seq = #{seq}
+	</update>
+	
+<!--  == #67. (댓글쓰기가 없는 게시판에서) 글 1개 보여주기  ==  -->
+   <select id="getView" parameterType="String" resultType="com.spring.board.model.BoardVO">
+      select previousseq, previoussubject
+           , seq, fk_userid, name, subject, content, readCount, regDate
+           , nextseq, nextsubject
+      from 
+      (
+          select  lag(seq,1) over(order by seq desc) AS previousseq 
+                , lag(subject,1) over(order by seq desc) AS previoussubject
+                  
+                 , seq, fk_userid, name, subject, content, readCount
+                 , to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') AS regDate
+          
+                 , lead(seq,1) over(order by seq desc) AS nextseq 
+                 , lead(subject,1) over(order by seq desc) AS nextsubject
+          from tbl_board
+          where status = 1
+      ) V 
+      where V.seq = #{seq}      
+   </select>
+		
 </mapper>
 
 

@@ -27,7 +27,7 @@ public interface InterBoardService {
 
 	List<BoardVO> boardListNoSearch();
 
-	BoardVO getView(String seq, String userid, String fk_userid);
+	BoardVO getView(String seq, String userid);
 
 
 }

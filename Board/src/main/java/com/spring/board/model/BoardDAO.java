@@ -125,6 +125,24 @@ public class BoardDAO implements InterBoardDAO {
 		
 		return boardList;
 	}
+
+	// 글 조회수 1 증가
+	@Override
+	public void setAddReadCount(String seq) {
+		
+		sqlsession.update("board.setAddReadCount", seq);
+		
+	}
+
+	// 글 1개 조회하기
+	@Override
+	public BoardVO getView(String seq) {
+	
+		BoardVO boardvo = sqlsession.selectOne("board.getVIew", seq);
+		
+		return boardvo;
+		
+	}
 	
 	
 	
