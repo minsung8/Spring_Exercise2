@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spring.board.model.BoardVO;
+import com.spring.board.model.CommentVO;
 import com.spring.board.model.MemberVO;
 import com.spring.board.model.TestVO;
 
@@ -29,5 +30,14 @@ public interface InterBoardService {
 
 	BoardVO getView(String seq, String userid);
 
+	BoardVO getViewWithNoAddCount(String seq);
+
+	int edit(BoardVO boardvo);
+
+	int del(BoardVO boardvo);
+	
+	int addComment(CommentVO commentvo) throws Throwable;	// 댓글쓰기 (Transaction 처리)
+	
+	
 
 }

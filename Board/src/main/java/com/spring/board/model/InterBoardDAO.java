@@ -26,6 +26,15 @@ public interface InterBoardDAO {
 
 	void setAddReadCount(String seq);
 	BoardVO getView(String seq);
+
+	int edit(BoardVO boardvo);
+
+	int del(BoardVO boardvo);
+
+	int addComment(CommentVO commentvo);		// 댓글입력 및 count update
+	int updateCommentCount(String parentSeq);
+	
+	
 	
 	
 	

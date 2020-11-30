@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.common.Sha256;
 import com.spring.board.model.BoardVO;
+import com.spring.board.model.CommentVO;
 import com.spring.board.model.MemberVO;
 import com.spring.board.model.TestVO;
 import com.spring.board.service.InterBoardService;
@@ -464,12 +465,27 @@ public class BoardController {
 		
 		// === 글 목록보기 페이지 요청 === //
 		@RequestMapping(value="/list.action")
-		public ModelAndView list (ModelAndView mav) {
+		public ModelAndView list ( HttpServletRequest request, ModelAndView mav) {
 			
 			List<BoardVO> boardList = null;
 			
 			boardList = service.boardListNoSearch();
-
+			
+			//////////////////////////////////////////////////////
+			// === #69. 글조회수(readCount)증가 (DML문 update)는
+			//          반드시 목록보기에 와서 해당 글제목을 클릭했을 경우에만 증가되고,
+			//          웹브라우저에서 새로고침(F5)을 했을 경우에는 증가가 되지 않도록 해야 한다.
+			//          이것을 하기 위해서는 session 을 사용하여 처리하면 된다.
+			
+			HttpSession session = request.getSession();
+			
+			session.setAttribute("readCountPermission", "yes");
+		      /*
+		         session 에  "readCountPermission" 키값으로 저장된 value값은 "yes" 이다.
+		         session 에  "readCountPermission" 키값에 해당하는 value값 "yes"를 얻으려면 
+		            반드시 웹브라우저에서 주소창에 "/list.action" 이라고 입력해야만 얻어올 수 있다. 
+		      */
+			
 			mav.addObject("boardList", boardList);
 			mav.setViewName("board/list.tiles1");
 
@@ -477,7 +493,7 @@ public class BoardController {
 			return mav;
 		}
 		
-		// === 글 1개 보여주기 페이지 요청 === //
+		// === #62 글 1개 보여주기 페이지 요청 === //
 		@RequestMapping(value="/view.action")
 		public ModelAndView view(HttpServletRequest request, ModelAndView mav) {
 			
@@ -493,17 +509,168 @@ public class BoardController {
 				login_userid = loginuser.getUserid();
 			}
 			
+			// === #68. !!! 중요 !!! 
+	        //     글1개를 보여주는 페이지 요청은 select 와 함께 
+	      //     DML문(지금은 글조회수 증가인 update문)이 포함되어져 있다.
+	      //     이럴경우 웹브라우저에서 페이지 새로고침(F5)을 했을때 DML문이 실행되어
+	      //     매번 글조회수 증가가 발생한다.
+	      //     그래서 우리는 웹브라우저에서 페이지 새로고침(F5)을 했을때는
+	      //     단순히 select만 해주고 DML문(지금은 글조회수 증가인 update문)은 
+	      //     실행하지 않도록 해주어야 한다. !!! === //
+			
 			
 			BoardVO boardvo = null;
-
+			
+			// 위의 글목록보기 #69. 에서 session.setAttribute("readCountPermission", "yes"); 해두었다.
+			if ("yes".equals(session.getAttribute("readCountPermission"))) {
+				
+				boardvo = service.getView(seq, login_userid);
+				
+				session.removeAttribute("readCountPermission");
+				// 중요함!! session 에 저장된 readCountPermission 을 삭제한다.
+			} else {
+				
+				boardvo = service.getViewWithNoAddCount(seq);
+			}
+			
+			
 			boardvo = service.getView(seq, login_userid);
-
+			mav.addObject("loginuser", loginuser);
 			mav.addObject("boardvo", boardvo);
 			mav.setViewName("board/view.tiles1");
 			
 			return mav;
 		}
 		
+		
+		
+		@RequestMapping(value="/edit.action")
+		// #71. 글 수정 페이지
+		public ModelAndView requiredLogin_edit(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+			
+			String seq = request.getParameter("seq");
+			
+			BoardVO boardvo = service.getViewWithNoAddCount(seq);
+			// 글 조회수 증가 없이 글 1개만 조회
+			
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+			
+			if ( !loginuser.getUserid().equals(boardvo.getFk_userid())) {
+				String message = "다른사람의 글은 수정이 불가합니다";
+				String loc = "javascript:history.back()";
+				
+				mav.addObject("message", message);
+				mav.addObject("loc", loc);
+				mav.setViewName("msg");
+			} else {
+				mav.addObject("boardvo", boardvo);
+				mav.setViewName("board/edit.tiles1");
+			}
+			
+			return mav;
+		}
+		
+		
+		// === #72. 글수정 페이지 완료하기 === // 
+		@RequestMapping(value="/editEnd.action", method = {RequestMethod.POST}) 
+		public ModelAndView editEnd(ModelAndView mav, BoardVO boardvo, HttpServletRequest request) {
+			
+			/*  글 수정을 하려면 원본글의 글암호와 수정시 입력해준 암호가 일치할때만 
+            	글 수정이 가능하도록 해야한다. */
+			int n = service.edit(boardvo);
+			
+			if ( n == 0) {
+				mav.addObject("msg", "암호가 일치하지 않아 글 수정이 불가합니다.");
+			} else {
+				mav.addObject("msg", "글 수정 성공!");
+			}
+			
+			mav.addObject("loc", request.getContextPath()+"/view.action?seq="+boardvo.getSeq());
+			mav.setViewName("msg");
+			
+			return mav;
+		}
+		
+		
+		// === #75. 글 내용 삭제하기 === ///
+		@RequestMapping(value="/del.action")
+		public ModelAndView requiredLogin_del(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+			
+			String seq = request.getParameter("seq");
+						
+			HttpSession session = request.getSession();
+			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+			
+			BoardVO boardvo = service.getViewWithNoAddCount(seq);
+			
+			if ( !loginuser.getUserid().equals(boardvo.getFk_userid())) {
+				String message = "다른사람의 글은 삭제가 불가합니다";
+				String loc = "javascript:history.back()";
+				
+				mav.addObject("message", message);
+				mav.addObject("loc", loc);
+				mav.setViewName("msg");
+			} else {
+				mav.addObject("boardvo", boardvo);
+				mav.setViewName("board/del.tiles1");
+			}
+			
+			return mav;
+		}
+		
+		
+		// === #72. 글삭제 페이지 완료하기 === // 
+		@RequestMapping(value="/delEnd.action", method = {RequestMethod.POST}) 
+		public ModelAndView delEnd(ModelAndView mav, BoardVO boardvo, HttpServletRequest request) {
+			
+			/*  글 수정을 하려면 원본글의 글암호와 수정시 입력해준 암호가 일치할때만 
+            	글 수정이 가능하도록 해야한다. */
+			int n = service.del(boardvo);
+			
+			if ( n == 0) {
+				mav.addObject("msg", "암호가 일치하지 않아 글 삭제가 불가합니다.");
+				mav.addObject("loc", request.getContextPath()+"/view.action?seq="+boardvo.getSeq());
+				mav.setViewName("msg");
+				
+			} else {
+				mav.addObject("msg", "글 삭제 성공!");
+				mav.addObject("loc", request.getContextPath()+"/list.action");
+				mav.setViewName("msg");
+				
+			}
+			
+			return mav;
+		}
+		
+		// === #84. 댓글쓰기(Ajax로 처리) === //
+		@ResponseBody
+		@RequestMapping(value="/addComment.action", method = {RequestMethod.POST})
+		public String addComment(CommentVO commentvo) {
+			
+
+			int n = service.addComment(commentvo);
+			
+			// 댓글쓰기(insert) 및 원게시물(tbl_board 테이블)에 댓글의 개수 증가(update 1씩 증가)
+			
+
+			
+			
+			return "";
+			
+		}
+		
+		/*
+		   @ExceptionHandler 에 대해서.....
+		   ==> 어떤 컨트롤러내에서 발생하는 익셉션이 있을시 익셉션 처리를 해주려고 한다면
+		       @ExceptionHandler 어노테이션을 적용한 메소드를 구현해주면 된다
+		        
+		      컨트롤러내에서 @ExceptionHandler 어노테이션을 적용한 메소드가 존재하면, 
+		      스프링은 익셉션 발생시 @ExceptionHandler 어노테이션을 적용한 메소드가 처리해준다.
+		      따라서, 컨트롤러에 발생한 익셉션을 직접 처리하고 싶다면 @ExceptionHandler 어노테이션을 적용한 메소드를 구현해주면 된다.
+		*/
+
+				
 }
 
 

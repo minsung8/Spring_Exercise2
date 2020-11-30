@@ -88,7 +88,7 @@
 	</update>
 	
 <!--  == #67. (댓글쓰기가 없는 게시판에서) 글 1개 보여주기  ==  -->
-   <select id="getView" parameterType="String" resultType="com.spring.board.model.BoardVO">
+   <select id="board.getVIew" parameterType="String" resultType="com.spring.board.model.BoardVO">
       select previousseq, previoussubject
            , seq, fk_userid, name, subject, content, readCount, regDate
            , nextseq, nextsubject
@@ -107,6 +107,33 @@
       ) V 
       where V.seq = #{seq}      
    </select>
+   
+<!-- #74 1개글 수정 -->
+	<update id="board.edit" parameterType="com.spring.board.model.BoardVO">
+		update tbl_board set subject = #{subject}
+							, content = #{content}
+		where seq = #{seq} and pw = #{pw}
+	</update> 
+	
+<!-- #75 1개글 삭제 -->
+	<update id="board.del" parameterType="com.spring.board.model.BoardVO">
+		delete from tbl_board
+		where seq = #{seq} and pw = #{pw}
+	</update> 
+	
+<!--  === #88. 댓글쓰기(tbl_comment 테이블에 insert) === -->
+    <insert id="addComment" parameterType="com.spring.board.model.CommentVO">
+       insert into tbl_comment(seq, fk_userid, name, content, regDate, parentSeq, status)
+        values(commentSeq.nextval, #{fk_userid}, #{name}, #{content}, default, #{parentSeq}, default)
+    </insert>
+    
+<!--  === #89. tbl_board 테이블에 commentCount 컬럼의 값을 1증가(update) === -->  
+   <update id="updateCommentCount" parameterType="String">
+       update tbl_board set commentCount = commentCount + 1 
+       where seq = #{parentSeq}
+    </update>
+	
+	
 		
 </mapper>
 

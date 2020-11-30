@@ -144,14 +144,38 @@ public class BoardDAO implements InterBoardDAO {
 		
 	}
 	
+	// #74. 글 수정하기 //
+	@Override
+	public int edit(BoardVO boardvo) {
+		int n = sqlsession.update("board.edit", boardvo);
+		
+		return n;
+	}
+
+	@Override
+	public int del(BoardVO boardvo) {
+		
+		int n = sqlsession.delete("board.del", boardvo);
+		
+		return n;
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// === #86. 댓글쓰기 insert === // 
+	@Override
+	public int addComment(CommentVO commentvo) {
+		
+		int n = sqlsession.insert("board.addComment", commentvo);
+		
+		return n;
+	}
+
+	// === #87. 댓글Count update === // 
+	@Override
+	public int updateCommentCount(String parentSeq) {
+		
+		int n = sqlsession.update("board.updateCommentCount", parentSeq);
+		
+		return n;
+	}	
+		
 }
