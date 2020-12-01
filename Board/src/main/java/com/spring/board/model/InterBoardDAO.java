@@ -33,6 +33,11 @@ public interface InterBoardDAO {
 
 	int addComment(CommentVO commentvo);		// 댓글입력 및 count update
 	int updateCommentCount(String parentSeq);
+
+	int updateMemberPoint(Map<String, String> paraMap);
+
+	List<CommentVO> getCommentList(String parentSeq);		// 댓글 읽어오기
+
 	
 	
 	

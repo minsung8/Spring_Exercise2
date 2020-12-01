@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -645,19 +646,23 @@ public class BoardController {
 		
 		// === #84. 댓글쓰기(Ajax로 처리) === //
 		@ResponseBody
-		@RequestMapping(value="/addComment.action", method = {RequestMethod.POST})
+		@RequestMapping(value="/addComment.action", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")		// 한글깨짐 방지
 		public String addComment(CommentVO commentvo) {
 			
-
-			int n = service.addComment(commentvo);
+			int n = 0;
 			
-			// 댓글쓰기(insert) 및 원게시물(tbl_board 테이블)에 댓글의 개수 증가(update 1씩 증가)
+			try {
+				n = service.addComment(commentvo);
+			} catch (Throwable e) {
+				
+			}
 			
-
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("n", n);
+			jsonObj.put("name", commentvo.getName());
 			
-			
-			return "";
-			
+			return jsonObj.toString();
+						
 		}
 		
 		/*
@@ -669,18 +674,45 @@ public class BoardController {
 		      스프링은 익셉션 발생시 @ExceptionHandler 어노테이션을 적용한 메소드가 처리해준다.
 		      따라서, 컨트롤러에 발생한 익셉션을 직접 처리하고 싶다면 @ExceptionHandler 어노테이션을 적용한 메소드를 구현해주면 된다.
 		*/
-
+		@ExceptionHandler(java.lang.Throwable.class)
+		public String handleThrowable(Throwable e, HttpServletRequest request) {
+			
+			System.out.println("오류메세지" + e.getMessage());
+			
+			String message = "오류메세지" + e.getMessage();
+			String loc = "javascript:history.back()";
+			
+			request.setAttribute("message", message);
+			request.setAttribute("loc", loc);
+			
+			return "msg";
+		}
+		
+		
+		// === 90. 원 게시물에 딸린 댓글 보여주기 (AJAX로 처리) === //
+		@ResponseBody
+		@RequestMapping(value="/readComment.action", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")		// 한글깨짐 방지
+		public String readComment(CommentVO commentvo, HttpServletRequest request) {
+			
+			String parentSeq = request.getParameter("parentSeq");
+			
+			List<CommentVO> commentList = service.getCommentList(parentSeq);
+			
+			JSONArray jsonArr = new JSONArray();
+			
+			if (commentList != null) {
+				for (CommentVO cmt : commentList) {
+					JSONObject jsonObj = new JSONObject();
+					jsonObj.put("content", cmt.getContent());
+					jsonObj.put("regDate", cmt.getRegDate());
+					jsonObj.put("name", cmt.getName());
+					
+					jsonArr.put(jsonObj);
+				}
+			}
+			
+			return jsonArr.toString();
+			
+		}
 				
 }
-
-
-
-
-
-
-
-
-
-
-
-

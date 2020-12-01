@@ -2,9 +2,9 @@ package com.spring.board.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
+import java.util.Map;import org.apache.poi.wp.usermodel.Paragraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -196,19 +196,37 @@ public class BoardService implements InterBoardService {
 	// rollbackFor={Throwable.class} 은 롤백을 해야할 범위를 말하는데 Throwable.class 은 error 및 exception 을 포함한 최상위 루트이다. 즉, 해당 메소드 실행시 발생하는 모든 error 및 exception 에 대해서 롤백을 하겠다는 말이다.
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
-	public int addComment(CommentVO commentvo) throws Throwable {
+	public int addComment(CommentVO commentvo) throws Throwable{
 		
 		int result = 0;
 		int n = 0;
-		
+		int m = 0;
+			
 		n = dao.addComment(commentvo);		// 댓글쓰기
 		
 		if ( n == 1) {
-			result = dao.updateCommentCount(commentvo.getParentSeq());	// tbl_board 테이블에 commentCount 칼럼의 값을 1 증가(update)
+			m = dao.updateCommentCount(commentvo.getParentSeq());	// tbl_board 테이블에 commentCount 칼럼의 값을 1 증가(update)
+		}
+		
+		if (m == 1) {
+			
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("userid", commentvo.getFk_userid());
+			paraMap.put("point", "50");
+			
+			result = dao.updateMemberPoint(paraMap);	// point 50 증가
 		}
 		
 		return result;
 		
+	}
+
+	@Override
+	public List<CommentVO> getCommentList(String parentSeq) {
+		
+		List<CommentVO>	commentList = dao.getCommentList(parentSeq);
+		
+		return commentList;
 	}
 	
 }

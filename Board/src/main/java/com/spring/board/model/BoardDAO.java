@@ -176,6 +176,20 @@ public class BoardDAO implements InterBoardDAO {
 		int n = sqlsession.update("board.updateCommentCount", parentSeq);
 		
 		return n;
+	}
+
+	@Override
+	public int updateMemberPoint(Map<String, String> paraMap) {
+		int n = sqlsession.update("board.updateMemberPoint", paraMap);
+		return n;
+	}
+
+	@Override
+	public List<CommentVO> getCommentList(String parentSeq) {
+		
+		List<CommentVO> commentList = sqlsession.selectList("board.getCommentList", parentSeq);
+		
+		return commentList;
 	}	
 		
 }

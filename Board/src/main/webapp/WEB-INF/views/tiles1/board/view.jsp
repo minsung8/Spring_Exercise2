@@ -74,6 +74,15 @@ a {
 				dataType:"JSON",
 				success:function(json) {
 					
+					var n = json.n;		// n = 1 or 0
+					
+					if ( n == 0) {
+						alert( json.name+"의 현재 포인트는 300점을 초과할 수 없으므로 댓글쓰기가 불가합니다");
+					} else {
+						goReadComment();
+					} 
+					
+					
 					
 				},
 				error: function(request, status, error){
@@ -85,6 +94,23 @@ a {
 			
 		}
 
+	}
+	
+	// === 페이징 처리 안한 댓글 읽어오기 === //
+	function goReadComment() {
+		
+		$.ajax({
+			url:"<%= request.getContextPath()%>/readComment.action",
+			data:{"parentSeq":"${boardvo.seq}"},
+			dataType:"JSON",
+			success:function() {
+				
+			},
+			error: function(request, status, error){
+	        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	        }
+		})
+		
 	}
 	
 </script>
@@ -168,6 +194,20 @@ a {
 			<button type="reset">취소</button>
 		</form>
 	</c:if>
+	
+	<!-- ===== #94. 댓글 내용 보여주기 ===== -->
+   <table id="table2" style="margin-top: 2%; margin-bottom: 3%;">
+      <thead>
+      <tr>
+          <th style="width: 10%; text-align: center;">번호</th>
+         <th style="width: 60%; text-align: center;">내용</th>
+         <th style="width: 10%; text-align: center;">작성자</th>
+         <th style="text-align: center;">작성일자</th>
+      </tr>
+      </thead>
+      <tbody id="commentDisplay"></tbody>
+   </table>
+   
 </div>
 
 

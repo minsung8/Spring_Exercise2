@@ -13,16 +13,18 @@ public class CommentVO {
 	   private String parentSeq;    // 원게시물 글번호
 	   private String status;       // 글삭제여부
 	   
-	public CommentVO(String seq, String fk_userid, String name, String content, String regDate, String parentSeq,
+	   public CommentVO() {}
+	   
+	   public CommentVO(String seq, String fk_userid, String name, String content, String regDate, String parentSeq,
 			String status) {
-		super();
-		this.seq = seq;
-		this.fk_userid = fk_userid;
-		this.name = name;
-		this.content = content;
-		this.regDate = regDate;
-		this.parentSeq = parentSeq;
-		this.status = status;
+			super();
+			this.seq = seq;
+			this.fk_userid = fk_userid;
+			this.name = name;
+			this.content = content;
+			this.regDate = regDate;
+			this.parentSeq = parentSeq;
+			this.status = status;
 	}
 
 	public String getSeq() {

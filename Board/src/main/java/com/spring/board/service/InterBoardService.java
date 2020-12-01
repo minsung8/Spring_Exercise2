@@ -37,6 +37,8 @@ public interface InterBoardService {
 	int del(BoardVO boardvo);
 	
 	int addComment(CommentVO commentvo) throws Throwable;	// 댓글쓰기 (Transaction 처리)
+
+	List<CommentVO> getCommentList(String parentSeq);		// 댓글 가져오기
 	
 	
 
