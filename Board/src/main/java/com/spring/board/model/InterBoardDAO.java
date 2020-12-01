@@ -38,6 +38,8 @@ public interface InterBoardDAO {
 
 	List<CommentVO> getCommentList(String parentSeq);		// 댓글 읽어오기
 
+	void pointPlus(Map<String, String> paraMap);
+
 	
 	
 	

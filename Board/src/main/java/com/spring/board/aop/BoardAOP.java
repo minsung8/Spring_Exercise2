@@ -1,6 +1,7 @@
 package com.spring.board.aop;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,12 +10,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.spring.board.common.MyUtil;
+import com.spring.board.service.InterBoardService;
 
 // === #53. 공통관심사 클래스(Aspect 클래스)생성하기 === //
 @Aspect     // 공통관심사 클래스(Aspect 클래스)로 등록된다.
@@ -65,6 +69,34 @@ public class BoardAOP {
          }
       }
       
+   }
+   
+// ===== After Advice(보조업무) 만들기 ====== // 
+   /*
+       주업무(<예: 글쓰기, 제품구매 등등>)를 실행한 후  
+       회원의 포인트를 100점 증가해주는 것이 공통관심사(보조업무)라고 보자
+    
+       관심 클래스(Aspect 클래스)를 생성하여 포인트컷(주업무)과 어드바이스(보조업무)를 생성하여
+       동작하도록 만들겠다.
+   */   
+   
+   @Autowired
+   InterBoardService service;
+   
+   // === Pointcut(주업무)을 설정해야 한다. === // 
+   //     Pointcut 이란 공통관심사를 필요로 하는 메소드를 말한다. 
+   @Pointcut("execution(public * com.spring..*Controller.pointPlus_*(..))")
+   public void pointPlus() {}
+   
+   // === After Advice(공통관심사, 보조업무)를 구현한다. === //
+   @SuppressWarnings("unchecked")
+   @After("pointPlus()")
+   public void pointPlus(JoinPoint joinPoint) { // 회원의 포인트를 100점 증가시키는 메소드 작성 
+	   
+	   Map<String, String> paraMap = (Map<String, String>) joinPoint.getArgs()[0];
+	   
+	   service.pointPlus(paraMap);
+	   
    }
    
 }

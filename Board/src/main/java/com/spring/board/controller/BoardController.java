@@ -451,8 +451,12 @@ public class BoardController {
 		
 		// === #54. 게시판 글쓰기 완료 요청 === //
 		@RequestMapping(value="/addEnd.action", method= {RequestMethod.POST} )
-		public String addEnd(BoardVO boardvo) {
+		//public String addEnd(BoardVO boardvo) {
+		public String pointPlus_addEnd(Map<String, String> paraMap, BoardVO boardvo) {
 
+			paraMap.put("userid", boardvo.getFk_userid());
+			paraMap.put("point", "100");
+			
 			int n = service.add(boardvo);
 			
 			if ( n == 1) {
@@ -460,7 +464,6 @@ public class BoardController {
 			} else {
 				return "redirect:/add.action";
 			}
-			
             
 		}
 		
@@ -691,7 +694,7 @@ public class BoardController {
 		
 		// === 90. 원 게시물에 딸린 댓글 보여주기 (AJAX로 처리) === //
 		@ResponseBody
-		@RequestMapping(value="/readComment.action", method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")		// 한글깨짐 방지
+		@RequestMapping(value="/readComment.action", produces="text/plain;charset=UTF-8")		// 한글깨짐 방지
 		public String readComment(CommentVO commentvo, HttpServletRequest request) {
 			
 			String parentSeq = request.getParameter("parentSeq");
@@ -702,6 +705,7 @@ public class BoardController {
 			
 			if (commentList != null) {
 				for (CommentVO cmt : commentList) {
+				
 					JSONObject jsonObj = new JSONObject();
 					jsonObj.put("content", cmt.getContent());
 					jsonObj.put("regDate", cmt.getRegDate());

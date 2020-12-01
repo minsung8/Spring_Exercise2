@@ -190,6 +190,13 @@ public class BoardDAO implements InterBoardDAO {
 		List<CommentVO> commentList = sqlsession.selectList("board.getCommentList", parentSeq);
 		
 		return commentList;
+	}
+
+	@Override
+	public void pointPlus(Map<String, String> paraMap) {
+		
+		sqlsession.update("board.pointPlus", paraMap);
+		
 	}	
 		
 }

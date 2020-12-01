@@ -228,5 +228,12 @@ public class BoardService implements InterBoardService {
 		
 		return commentList;
 	}
+
+	@Override
+	public void pointPlus(Map<String, String> paraMap) {
+		dao.pointPlus(paraMap);
+	}
+
+	
 	
 }

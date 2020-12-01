@@ -22,11 +22,11 @@
    $(document).ready(function(){
       
 	   $("span.subject").bind("mouseover", function() {
-		   
+			$(this).addClass("subjectStyle");
 	   });  
 	   
 	   $("span.subject").bind("mouseout", function() {
-		   
+			$(this).removeClass("subjectStyle");
 	   });  
 	   
     });// end of $(document).ready(function(){})-------------------
@@ -52,15 +52,20 @@
       </tr>   
       <c:forEach var="boardvo" items="${boardList}" varStatus="status">
          <tr>
-            <td align="center">${boardvo.seq}
-            </td>
+            <td align="center">${boardvo.seq}</td>
             <td align="left">
-                <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>
+                <c:if test="${boardvo.commentCount > 0}">
+               		<span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject} 
+               		<span style="color:red;">[${boardvo.commentCount}]</span></span>
+                </c:if>
+                <c:if test="${boardvo.commentCount == 0}">
+               		<span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>
+                </c:if>
             </td>
             <td align="center">${boardvo.name}</td>
             <td align="center">${boardvo.regDate}</td>
             <td align="center">${boardvo.readCount}</td>
-                        </tr>
+            </tr>
       </c:forEach>
    </table>
    

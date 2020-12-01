@@ -46,17 +46,29 @@ table, th, td, input, textarea {
 a {
 	text-decoration: none !important;
 }
+
+td.comment{
+	text-align: center;
+}
 </style>
 
 <script type="text/javascript">
 
 	$(document).ready(function() {
+	
+		goReadComment();
 
+		$("span.move").hover(function(){
+			$(this).addClass("moveColor");
+		}, function(){
+			$(this).removeClass("moveColor");
+		});
+		
 	}); // end of $(document).ready(function(){})----------------
 	
 	// == 댓글쓰기 == // 
 	function goAddWrite() {
-		
+				
 		var contentVal = $("input#commentContent").val().trim();
 		
 		if (contentVal == "") {
@@ -104,6 +116,24 @@ a {
 			data:{"parentSeq":"${boardvo.seq}"},
 			dataType:"JSON",
 			success:function() {
+				
+				var html = "";
+				if (json.length > 0) {
+					$.each(json, function(index, item) {
+						html += "<tr>";
+						html += "<td class='comment'>"+(index + 1)+"</td>";
+						html += "<td>"+item.content+"</td>";
+						html += "<td class='comment'>"+item.name+"</td>";
+						html += "<td class='comment'>"+item.regDate+"</td>";
+						html += "<tr>";
+					})
+				} else {
+					html += "<tr>";
+					html += "<td colspan='4' class='comment'>댓글이 없습니다</td>";
+					html += "<tr>";
+				}
+				
+				$("tbody#commentDisplay").html(html);
 				
 			},
 			error: function(request, status, error){

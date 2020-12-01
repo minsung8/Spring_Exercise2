@@ -74,9 +74,19 @@
        values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, default, default, default) 
 	</insert>
 	
+	<!-- <select id="boardListNoSearch" resultType="com.spring.board.model.BoardVO">
+		select seq, fk_userid, name, subject  
+            , readcount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+       from tbl_board
+       where status = 1
+       order by seq desc
+	</select> -->
+	<!--  -->
+	<!-- #95 전체 글 목록 보여주기 + 딸린 댓글의 갯수 -->
 	<select id="boardListNoSearch" resultType="com.spring.board.model.BoardVO">
 		select seq, fk_userid, name, subject  
             , readcount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+            , commentCount
        from tbl_board
        where status = 1
        order by seq desc
@@ -141,10 +151,17 @@
     
 <!-- === #92. 원게시글에 딸린 댓글들을 조회해오는 것 -->
 	<select id="board.getCommentList" parameterType="String" resultType="com.spring.board.model.CommentVO">
-		select name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss' as regDate)
+		select name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
 		from tbl_comment
 		where status = 1 and parentSeq = #{parentSeq}
+		order by seq desc
 	</select>
+	
+	<update id="board.pointPlus" parameterType="HashMap">
+		update tbl_member set point = point + to_number(#{point})
+		where userid = #{fk_userid}
+	</update>
+	
 </mapper>
 
 
