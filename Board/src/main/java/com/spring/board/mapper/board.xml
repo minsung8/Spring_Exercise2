@@ -162,6 +162,27 @@
 		where userid = #{fk_userid}
 	</update>
 	
+<!-- === #105. 페이징처리 안한 검색어가 있는 전체 글 목록 보여주기 === -->
+	<select id="board.boardListSearch" parameterType="HashMap" resultType="com.spring.board.model.BoardVO">
+		select seq, fk_userid, name, subject  
+		  , readcount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+		  , commentCount
+		from tbl_board
+		where status = 1
+		<if test='searchWord != ""'>
+			and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+		</if>
+		order by seq desc
+	</select>	
+
+<!-- === #111. 검색어 입력시 자동글 완성하기 6 === -->
+	<select id="board.wordSearchShow" parameterType="HashMap" resultType="String">
+		select ${searchType}
+		from tbl_board
+		where status = 1 and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+		order by seq desc
+	</select>
+
 </mapper>
 
 

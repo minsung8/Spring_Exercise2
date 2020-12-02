@@ -40,6 +40,10 @@ public interface InterBoardDAO {
 
 	void pointPlus(Map<String, String> paraMap);
 
+	List<BoardVO> boardListSearch(Map<String, String> paraMap);
+
+	List<String> wordSearchShow(Map<String, String> paraMap);
+
 	
 	
 	

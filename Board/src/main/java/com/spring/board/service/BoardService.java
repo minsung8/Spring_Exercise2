@@ -234,6 +234,23 @@ public class BoardService implements InterBoardService {
 		dao.pointPlus(paraMap);
 	}
 
+	@Override
+	public List<BoardVO> boardListSearch(Map<String, String> paraMap) {
+
+		 List<BoardVO> boardList = dao.boardListSearch(paraMap);
+		
+		return boardList;
+	}
+
+	@Override
+	public List<String> wordSearchShow(Map<String, String> paraMap) {
+
+		List<String> wordList =	dao.wordSearchShow(paraMap);
+		return wordList;
+	}
+
+
+
 	
 	
 }

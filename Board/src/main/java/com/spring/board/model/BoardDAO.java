@@ -197,6 +197,21 @@ public class BoardDAO implements InterBoardDAO {
 		
 		sqlsession.update("board.pointPlus", paraMap);
 		
+	}
+
+	@Override
+	public List<BoardVO> boardListSearch(Map<String, String> paraMap) {
+		
+		List<BoardVO> boardList = sqlsession.selectList("board.boardListSearch", paraMap);
+		return boardList;
+		
+	}
+
+	@Override
+	public List<String> wordSearchShow(Map<String, String> paraMap) {
+		List<String> wordList = sqlsession.selectList("board.wordSearchShow", paraMap);
+		
+		return wordList;
 	}	
 		
 }

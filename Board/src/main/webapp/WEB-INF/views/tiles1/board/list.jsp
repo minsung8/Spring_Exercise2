@@ -27,13 +27,83 @@
 	   
 	   $("span.subject").bind("mouseout", function() {
 			$(this).removeClass("subjectStyle");
-	   });  
+	   });
+	   
+	   $("input#searchWord").keyup(function(event) {
+		   if ( event.keyCode == 13 ){
+			   goSearch();
+		   }
+	   });
+	   
+	   $("div#displayList").hide();
+	   
+	   $("input#searchWord").keyup(function() {
+		   
+		   var wordLength = $(this).val().length;
+		   
+		   if (wordLength == 0) {
+			   $("div#displayList").hide();
+		   } else {
+			   $.ajax({
+				   url:"<%= request.getContextPath()%>/wordSearchShow.action",
+				   type:"GET",
+				   data:{"searchType":$("select#searchType").val()
+					   , "searchWord":$("input#searchWord").val()},
+				   dataType:"JSON",
+				   success:function(json) {
+					   
+					   <%-- === #112. 검색어 입력시 자동글 완성하기 --%>
+					   if (json.length > 0) {
+						   // 검색된 데이터가 있는 경우
+						   
+						   var html = "";
+						   
+						   $.each(json, function(index, item) {
+							   var word = item.word;
+							   
+							   var index = word.toLowerCase().indexOf( $("input#searchWord").val() );;
+							   var len = $("input#searchWord").val().length;
+							   
+							   // console.log(word.substr(0, index));
+							   // console.log(word.substr(index, len));
+							   // console.log(word.substr(index+len));
+							   
+							   var result = "<span style='color:blue;'>" + word.substr(0, index) +"</span><span style='color:red;'>" + word.substr(index, len) +"</span><span style='color:blue;'>" + word.substr(index+len) + "</span>";
+							   
+							   html += result + "<br>";
+						   });
+						   
+						   $("div#displayList").html(html);
+						   $("div#displayList").show();
+					   } 
+					   
+				   },
+				   error: function(request, status, error){
+			        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			       }
+					
+			   });			   
+		   }
+		   
+
+		   
+
+		   
+	   });
 	   
     });// end of $(document).ready(function(){})-------------------
     
     function goView(seq) {
     	
     	location.href="<%= ctxPath%>/view.action?seq="+seq;
+    	
+    }
+    
+    function goSearch() {
+    	
+    	var frm = document.searchFrm;
+    	frm.method = "GET";
+    	frm.action = "<%= request.getContextPath()%>";
     	
     }
          
@@ -68,6 +138,20 @@
             </tr>
       </c:forEach>
    </table>
+
+	<!-- === #101. 글검색 폼 추가하기 === -->
+	<form name="searchFrm" style="margin-top: 20px;">
+      <select name="searchType" id="searchType" style="height: 26px;">
+         <option value="subject">글제목</option>
+         <option value="name">글쓴이</option>
+      </select>
+      <input type="text" name="searchWord" id="searchWord" size="40" autocomplete="off" /> 
+      <button type="button" onclick="goSearch()">검색</button>
+   </form>
    
+   <!-- === #106. 검색글 입력시 자동글 완성하기 1 === -->
+   <div id="displayList" style="border:solid 1px gray; border-top:0px; width:318px; height:100px; margin-left:70px; margin-top:-1px; overflow:auto;">
+   		
+   </div>
 </div>
 

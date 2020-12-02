@@ -42,6 +42,10 @@ public interface InterBoardService {
 
 	
 	void pointPlus(Map<String, String> paraMap);	// BoardAOP 클래스에서 사용하는 것으로 특정 회원에게 특정 점수만큼 포인트를 증가하기 위한 것 
+
+	List<BoardVO> boardListSearch(Map<String, String> paraMap);	// 검색어 적용 상품 목록
+
+	List<String> wordSearchShow(Map<String, String> paraMap);
 	
 	
 
