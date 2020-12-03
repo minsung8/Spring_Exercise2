@@ -44,6 +44,10 @@ public interface InterBoardDAO {
 
 	List<String> wordSearchShow(Map<String, String> paraMap);
 
+	int getTotalCount(Map<String, String> paraMap);
+
+	List<BoardVO> boardListSearchWithPaging(Map<String, String> paraMap);
+
 	
 	
 	

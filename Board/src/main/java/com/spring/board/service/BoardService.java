@@ -249,6 +249,20 @@ public class BoardService implements InterBoardService {
 		return wordList;
 	}
 
+	@Override
+	public int getTotalCount(Map<String, String> paraMap) {
+		int n = dao.getTotalCount(paraMap);
+		return n;
+	}
+
+	@Override
+	public List<BoardVO> boardListSearchWithPaging(Map<String, String> paraMap) {
+		
+		List<BoardVO> boardList = dao.boardListSearchWithPaging(paraMap);
+
+		return boardList;
+	}
+
 
 
 	

@@ -212,6 +212,21 @@ public class BoardDAO implements InterBoardDAO {
 		List<String> wordList = sqlsession.selectList("board.wordSearchShow", paraMap);
 		
 		return wordList;
+	}
+
+	@Override
+	public int getTotalCount(Map<String, String> paraMap) {
+
+		int n = sqlsession.selectOne("board.getTotalCount", paraMap);
+		return n;
+	}
+
+	@Override
+	public List<BoardVO> boardListSearchWithPaging(Map<String, String> paraMap) {
+		
+		List<BoardVO> boardList = sqlsession.selectList("board.boardListSearchWithPaging", paraMap);
+		
+		return boardList;
 	}	
 		
 }

@@ -183,6 +183,7 @@ td.comment{
 
 
 	</table>
+	
 
 	<br />
 
@@ -237,6 +238,8 @@ td.comment{
       </thead>
       <tbody id="commentDisplay"></tbody>
    </table>
+   
+
    
 </div>
 

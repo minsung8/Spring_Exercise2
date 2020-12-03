@@ -24,6 +24,7 @@
        3. myBatis 에서 제공하는 if 엘리먼트나 choose 엘리먼트 안에서 사용할때는 
              그냥 <if test="key명"> <when test="key명"> 으로 사용한다. 
    -->
+   
 	<insert id="test_insert_map" parameterType="HashMap">
 		insert into spring_test(no, name, writeday)
 		values(#{no}, #{name}, default)
@@ -179,15 +180,37 @@
 	<select id="board.wordSearchShow" parameterType="HashMap" resultType="String">
 		select ${searchType}
 		from tbl_board
-		where status = 1 and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+		where status = 1
+		and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 		order by seq desc
+	</select>
+	
+	<select id="board.getTotalCount" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_board
+		where status = 1
+		<if test="searchWord != ''">
+		and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+		</if>
+		order by seq desc
+	</select>
+	
+	<select id="board.boardListSearchWithPaging" parameterType="HashMap" resultType="com.spring.board.model.BoardVO">
+		select seq, fk_userid, name, subject, readCount, regDate, commentCount
+		from
+		(
+		select row_number() over(order by seq desc) as rno
+		        , seq, fk_userid, name, subject, readCount
+		        , to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+		        , commentCount
+		from tbl_board
+		where status = 1
+		<if test="searchWord != ''">
+			and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+		</if>
+
+		) v
+		where rno between #{startRno} and #{endRno}
 	</select>
 
 </mapper>
-
-
-
-
-
-
-	

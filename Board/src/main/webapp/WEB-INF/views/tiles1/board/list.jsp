@@ -29,7 +29,7 @@
 			$(this).removeClass("subjectStyle");
 	   });
 	   
-	   $("input#searchWord").keyup(function(event) {
+	   $("input#searchWord").keyup(function(event) {		   
 		   if ( event.keyCode == 13 ){
 			   goSearch();
 		   }
@@ -70,7 +70,7 @@
 							   
 							   var result = "<span style='color:blue;'>" + word.substr(0, index) +"</span><span style='color:red;'>" + word.substr(index, len) +"</span><span style='color:blue;'>" + word.substr(index+len) + "</span>";
 							   
-							   html += result + "<br>";
+							   html += "<span style='cursor:pointer;' class='result'>" + result + "</span><br>";
 						   });
 						   
 						   $("div#displayList").html(html);
@@ -85,13 +85,25 @@
 			   });			   
 		   }
 		   
-
-		   
-
+	   });	// end of $("input#searchWord").keyup(function()
+	   
+		<%-- #113. 검색어 입력시 자동글 완성하기 8 --%>
+	   $(document).on("click", ".result", function() {
+		  
+		   var word = $(this).text();
+		   $("input#searchWord").val(word);		// text박스에 검색된 결과의 문자열을 입력해준다.
+		   $("div#displayList").hide();
+		   goSearch();
 		   
 	   });
 	   
-    });// end of $(document).ready(function(){})-------------------
+	   if ( ${searchWord != null }) {
+		   $("select#searchType").val("${searchType}");
+		   $("input#searchWord").val("${searchWord}");
+	   }
+	   
+			   
+});// end of $(document).ready(function(){})-------------------
     
     function goView(seq) {
     	
@@ -102,8 +114,8 @@
     function goSearch() {
     	
     	var frm = document.searchFrm;
-    	frm.method = "GET";
-    	frm.action = "<%= request.getContextPath()%>";
+    	frm.method = "POST";
+    	frm.action = "<%= ctxPath%>/list.action";
     	
     }
          
@@ -138,6 +150,10 @@
             </tr>
       </c:forEach>
    </table>
+   
+   	<div align="center" style="width: 70%; border: solid 1px gray; margin: 20px auto;">
+   		${pageBar}
+   </div>
 
 	<!-- === #101. 글검색 폼 추가하기 === -->
 	<form name="searchFrm" style="margin-top: 20px;">

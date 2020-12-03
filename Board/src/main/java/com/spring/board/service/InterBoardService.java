@@ -46,6 +46,10 @@ public interface InterBoardService {
 	List<BoardVO> boardListSearch(Map<String, String> paraMap);	// 검색어 적용 상품 목록
 
 	List<String> wordSearchShow(Map<String, String> paraMap);
+
+	int getTotalCount(Map<String, String> paraMap);
+
+	List<BoardVO> boardListSearchWithPaging(Map<String, String> paraMap);
 	
 	
 
