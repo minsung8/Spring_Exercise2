@@ -17,49 +17,36 @@ public class MemberVO {
 	private int coin;                  // 코인액
 	private int point;                 // 포인트 
 	private String registerday;        // 가입일자 
-	private String lastpwdchangeddate;  // 마지막으로 암호를 변경한 날짜  
+	private String lastpwdchangedate;  // 마지막으로 암호를 변경한 날짜  
 	private int status;                // 회원탈퇴유무   1: 사용가능(가입중) / 0:사용불능(탈퇴) 
 	private int idle;                  // 휴면유무         0: 활동중  /  1 : 휴면중 
 	                                   // 마지막으로 로그인 한 날짜시간이 현재시각으로 부터 1년이 지났으면 휴면으로 지정 
 	
-	private int pwdchangegap;		// 
-	private int lastlogingap;
-	
-	
+	private int pwdchangegap;          // select용. 지금으로 부터 마지막으로 암호를 변경한지가 몇개월인지 알려주는 개월수(3개월 동안 암호를 변경 안 했을시 암호를 변경하라는 메시지를 보여주기 위함) 
+	private int lastlogingap;          // select용. 지금으로 부터 마지막으로 로그인한지가 몇개월인지 알려주는 개월수(12개월 동안 로그인을 안 했을 경우 해당 로그인계정을 비활성화 시키려고 함)  
 	
 	/////////////////////////////////////////////////////////////////////
 	
-	public int getLastlogingap() {
-		return lastlogingap;
-	}
-
-	public void setLastlogingap(int lastlogingap) {
-		this.lastlogingap = lastlogingap;
-	}
-
-	public int getPwdchangegap() {
-		return pwdchangegap;
-	}
-
-	public void setPwdchangegap(int pwdchangegap) {
-		this.pwdchangegap = pwdchangegap;
-	}
-
 	private boolean requirePwdChange = false;
 	// 마지막으로 암호를 변경한 날짜가 현재시각으로 부터 3개월이 지났으면 true
 	// 마지막으로 암호를 변경한 날짜가 현재시각으로 부터 3개월이 지나지 않았으면 false
 	
 	/////////////////////////////////////////////////////////////////////
 	
-	public String getLastpwdchangeddate() {
-		return lastpwdchangeddate;
-	}
-
-	public void setLastpwdchangeddate(String lastpwdchangeddate) {
-		this.lastpwdchangeddate = lastpwdchangeddate;
-	}
-
 	public MemberVO() {}
+	
+	public MemberVO(String userid, String pwd, String name, String email, String mobile, String postcode,
+			String address, String detailaddress, String extraaddress) {
+		this.userid = userid;
+		this.pwd = pwd;
+		this.name = name;
+		this.email = email;
+		this.mobile = mobile;
+		this.postcode = postcode;
+		this.address = address;
+		this.detailaddress = detailaddress;
+		this.extraaddress = extraaddress;
+	}
 	
 	public MemberVO(String userid, String pwd, String name, String email, String mobile, String postcode,
 			String address, String detailaddress, String extraaddress, String gender, String birthday) {
@@ -74,19 +61,6 @@ public class MemberVO {
 		this.extraaddress = extraaddress;
 		this.gender = gender;
 		this.birthday = birthday;
-	}
-	
-	public MemberVO(String userid, String pwd, String name, String email, String mobile, String postcode,
-			String address, String detailaddress, String extraaddress) {
-		this.userid = userid;
-		this.pwd = pwd;
-		this.name = name;
-		this.email = email;
-		this.mobile = mobile;
-		this.postcode = postcode;
-		this.address = address;
-		this.detailaddress = detailaddress;
-		this.extraaddress = extraaddress;
 	}
 
 	public String getUserid() {
@@ -201,8 +175,13 @@ public class MemberVO {
 		this.registerday = registerday;
 	}
 	
-
-
+	public String getLastpwdchangedate() {
+		return lastpwdchangedate;
+	}
+	
+	public void setLastpwdchangedate(String lastpwdchangedate) {
+		this.lastpwdchangedate = lastpwdchangedate;
+	}
 	
 	public int getStatus() {
 		return status;
@@ -220,6 +199,24 @@ public class MemberVO {
 		this.idle = idle;
 	}
 
+	// select 용. 지금으로 부터 마지막으로 암호를 변경한지가 몇개월인지 알려주는 개월수 
+	public int getPwdchangegap() {
+		return pwdchangegap;
+	}
+
+	public void setPwdchangegap(int pwdchangegap) {
+		this.pwdchangegap = pwdchangegap;
+	}	
+	
+	// select용. 지금으로 부터 마지막으로 로그인한지가 몇개월인지 알려주는 개월수  
+	public int getLastlogingap() {
+		return lastlogingap;
+	}
+
+	public void setLastlogingap(int lastlogingap) {
+		this.lastlogingap = lastlogingap;
+	}
+	
     //////////////////////////////////////////////////////////
 	
 	public boolean isRequirePwdChange() {
@@ -230,12 +227,21 @@ public class MemberVO {
 		this.requirePwdChange = requirePwdChange;
 	}
 	
-	public int getAge() { 
+	
+	public int getAge() {
 		int age = 0;
-		Calendar currentDate = Calendar.getInstance(); // 현재날짜와 시간을 얻어온다.
-		int currentYear = currentDate.get(Calendar.YEAR); 
-		age = currentYear - Integer.parseInt( birthday.substring(0, 4) ) + 1;
-		return age; 
+		
+		Calendar currentDate = Calendar.getInstance(); 
+		// 현재날짜와 시간을 얻어온다.
+		
+		int currentYear = currentDate.get(Calendar.YEAR);
+		
+		age =  currentYear - Integer.parseInt( birthday.substring(0, 4) ) + 1;
+		
+		return age;
 	}
-
+	
+	
+	
+	
 }

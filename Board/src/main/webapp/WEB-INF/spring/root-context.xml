@@ -15,6 +15,7 @@
 		<property name="password" value="cclass" />
 	</bean> 
 
+
 	<!-- ==== #15. myBatis(JDBC)설정 mapper 파일 위치 지정하기  ==== -->
 	<!-- mapper 파일이란 sql 문을 가지고 있는 xml 파일을 말한다. -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -26,17 +27,17 @@
 	<bean id="sqlsession" class="org.mybatis.spring.SqlSessionTemplate"> 
 		<constructor-arg index="0" ref="sqlSessionFactory" />
 	</bean>		
-
-
+	
 	
 	<!-- ==== 원격 오라클 서버에 연결 시작  ==== -->
 	<bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-		<property name="url" value="jdbc:oracle:thin:@211.238.142.97:1521:xe" />
-		<property name="username" value="covengers" />
+		<property name="url" value="jdbc:oracle:thin:@211.238.142.89:1521:xe" />
+		<property name="username" value="logitech" />
 		<property name="password" value="cclass" />
 	</bean> 
-
+	
+	<!-- mapper 파일이란 sql 문을 가지고 있는 xml 파일을 말한다. -->
 	<bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="mapperLocations" value="classpath*:com/spring/board/mapper/*.xml" />
 		<property name="dataSource" ref="dataSource2"/>
@@ -44,16 +45,18 @@
 		
 	<bean id="sqlsession2" class="org.mybatis.spring.SqlSessionTemplate"> 
 		<constructor-arg index="0" ref="sqlSessionFactory2" />
-	</bean>	
+	</bean>
 	
-	<!-- ==== 로컬 오라클 서버의  HR 연결 시작 2  ==== -->
+	
+	<!-- ==== 로컬 오라클 서버의 HR 연결 시작  ==== -->
 	<bean id="dataSource3" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
 		<property name="username" value="hr" />
 		<property name="password" value="cclass" />
 	</bean> 
-
+	
+	<!-- mapper 파일이란 sql 문을 가지고 있는 xml 파일을 말한다. -->
 	<bean id="sqlSessionFactory3" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="mapperLocations" value="classpath*:com/spring/board/mapper/*.xml" />
 		<property name="dataSource" ref="dataSource3"/>
@@ -61,16 +64,16 @@
 		
 	<bean id="sqlsession3" class="org.mybatis.spring.SqlSessionTemplate"> 
 		<constructor-arg index="0" ref="sqlSessionFactory3" />
-	</bean>	
+	</bean>
+	
 	
 	<!-- ==== #16. 트랜잭션 처리를 위해서 아래와 같이 트랜잭션매니저 객체를 bean 으로 등록해야 한다. ==== -->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-	   <property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<tx:annotation-driven transaction-manager="transactionManager" />
-	   
+		
 	<!-- ==== #17. jackson 과 관련된 기능을 사용하기 위해 빈을 등록한다. ==== -->
 	<bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
-
-
+	
 </beans>
