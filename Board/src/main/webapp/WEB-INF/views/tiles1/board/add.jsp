@@ -80,6 +80,12 @@
          </tr>
       </table>
       
+      <!-- === #143. 답변글쓰기가 추가된 경우 === -->
+      <input type="hidden" name="fk_seq" value="${fk_seq}"/>
+      <input type="hidden" name="groupno" value="${groupno}"/>
+      <input type="hidden" name="depthno" value="${depthno}"/>
+
+      
       <div style="margin: 20px;">
          <button type="button" id="btnWrite">쓰기</button>
          <button type="button" onclick="javascript:history.back()">취소</button>

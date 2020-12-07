@@ -357,6 +357,10 @@
 	<button type="button" onclick="javascript:location.href='<%= request.getContextPath()%>/edit.action?seq=${boardvo.seq}'">수정</button>
 	<button type="button" onclick="javascript:location.href='<%= request.getContextPath()%>/del.action?seq=${boardvo.seq}'">삭제</button>
 
+	<!-- #141. 어떤 글에 대한 답변 글쓰기는 로그인 되어진 회원의 gradelevel 10인 직원들만 가능-->
+	<c:if test="${loginuser.gradelevel == 10 }">
+	<button type="button" onclick="javascript:location.href='<%= request.getContextPath()%>/add.action?seq=${boardvo.seq}&groupno=${groupno}&depthno=${depthno}'">답변글쓰기</button>
+	</c:if>
 
 	<%-- === #83. 댓글쓰기 폼 추가 === --%>
 	<c:if test="${not empty sessionScope.loginuser}">

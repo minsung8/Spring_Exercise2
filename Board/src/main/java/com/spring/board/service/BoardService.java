@@ -136,6 +136,19 @@ public class BoardService implements InterBoardService {
 	// === #55. 글쓰기(파일첨부가 없는 글쓰기) === //
 	@Override
 	public int add(BoardVO boardvo) {
+		
+		// === #144. 글쓰기가 원글쓰기인지 아니면 답변글쓰기인지 구분 === //
+			// 원글쓰기라면 tbl_board 테이블의 groupno 컬럼의 값은 
+			// groupno 칼럼의 최대값 + 1로 해서 insert 해야하고,
+			// 답변글쓰기라면 넘겨받은 값을 그대로 insert 해줘야 한다.
+		
+		if (boardvo.getFk_seq() == null || boardvo.getFk_seq().trim().isEmpty() ) {
+			// 원글쓰기라면
+			
+			 groupno 컬럼의 최대값 1 + 1
+			
+		}
+		
 		int n = dao.add(boardvo);
 		return n;
 	}

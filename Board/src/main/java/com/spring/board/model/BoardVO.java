@@ -23,10 +23,38 @@ public class BoardVO {
 	//          먼저 tbl_board 테이블에 commentCount 라는 컬럼이 존재해야 한다. 
 	private String commentCount;     // 댓글수 
 	
+	// === #137. 답변글쓰기 게시판을 위한 필드 추가하기
+	// 		먼저, 오라클에서 tbl_board, tbl_comment을 drop한 후 다시 재생성한 이후 아래처럼 해야한다.
+	private String groupno; 
+	/*
+	 *  -- 답변글쓰기에 있어서 그룹번호 
+        -- 원글(부모글)과 답변글은 동일한 groupno 를 가진다.
+        -- 답변글이 아닌 원글(부모글)인 경우 groupno 의 값은 groupno 컬럼의 최대값(max)+1 로 한다.
+
+	 */
+	
+	private String fk_seq;
+	/*
+	 * -- fk_seq 컬럼은 절대로 foreign key가 아니다.!!!!!!
+     -- fk_seq 컬럼은 자신의 글(답변글)에 있어서 
+     -- 원글(부모글)이 누구인지에 대한 정보값이다.
+     -- 답변글쓰기에 있어서 답변글이라면 fk_seq 컬럼의 값은 
+     -- 원글(부모글)의 seq 컬럼의 값을 가지게 되며,
+     -- 답변글이 아닌 원글일 경우 0 을 가지도록 한다.
+	 */
+	
+	private String depthno;
+	/*
+	 * -- 답변글쓰기에 있어서 답변글 이라면
+     -- 원글(부모글)의 depthno + 1 을 가지게 되며,
+     -- 답변글이 아닌 원글일 경우 0 을 가지도록 한다.
+	 */
+	
+	
 	public BoardVO() {}
 	
 	public BoardVO(String seq, String fk_userid, String name, String subject, String content, String pw,
-			String readCount, String regDate, String status) {
+			String readCount, String regDate, String status, String groupno, String fk_seq, String depthno) {
 		this.seq = seq;
 		this.fk_userid = fk_userid;
 		this.name = name;
@@ -36,6 +64,34 @@ public class BoardVO {
 		this.readCount = readCount;
 		this.regDate = regDate;
 		this.status = status;
+		this.groupno = groupno;
+		this.fk_seq = fk_seq;
+		this.depthno = depthno;
+		
+	}
+
+	public String getGroupno() {
+		return groupno;
+	}
+
+	public void setGroupno(String groupno) {
+		this.groupno = groupno;
+	}
+
+	public String getFk_seq() {
+		return fk_seq;
+	}
+
+	public void setFk_seq(String fk_seq) {
+		this.fk_seq = fk_seq;
+	}
+
+	public String getDepthno() {
+		return depthno;
+	}
+
+	public void setDepthno(String depthno) {
+		this.depthno = depthno;
 	}
 
 	public String getSeq() {
