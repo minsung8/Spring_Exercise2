@@ -143,9 +143,9 @@ public class BoardService implements InterBoardService {
 			// 답변글쓰기라면 넘겨받은 값을 그대로 insert 해줘야 한다.
 		
 		if (boardvo.getFk_seq() == null || boardvo.getFk_seq().trim().isEmpty() ) {
-			// 원글쓰기라면
-			
-			 groupno 컬럼의 최대값 1 + 1
+			// 원글쓰기라면  groupno 컬럼의 최대값 + 1
+			int groupno = dao.getGroupnoMax() + 1;
+			boardvo.setGroupno( String.valueOf(groupno) );
 			
 		}
 		

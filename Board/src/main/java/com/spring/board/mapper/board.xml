@@ -110,11 +110,25 @@
 	
 	
 	<!-- === #57. 글쓰기(파일첨부가 없는 글쓰기) ===  -->
-	<insert id="add" parameterType="com.spring.board.model.BoardVO">
+	<!-- <insert id="add" parameterType="com.spring.board.model.BoardVO">
 		insert into tbl_board(seq, fk_userid, name, subject, content, pw, readCount, regDate, status)
 	    values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, default, default, default) 
+	</insert> -->
+	
+	<!-- === #147. 원글 또는 답변 글쓰기(파일첨부가 없는 글쓰기) ===  
+		먼저 #57을 주석처리한 후 아래처럼 한다. 
+	-->
+	<insert id="add" parameterType="com.spring.board.model.BoardVO">
+		<if test='fk_seq.equals("")'>
+			insert into tbl_board(seq, fk_userid, name, subject, content, pw, readCount, regDate, status, groupno, fk_seq, depthno)
+		    values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, default, default, default, #{groupno}, default, default)
+	    </if>
+	    
+	    <if test='!fk_seq.equals("")'>
+		    insert into tbl_board(seq, fk_userid, name, subject, content, pw, readCount, regDate, status, groupno, fk_seq, depthno)
+		    values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, default, default, default, #{groupno}, #{fk_seq}, #{depthno} + 1 ) 
+		</if>
 	</insert>
-	 
 	 
 	<!-- == #61. 페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기 ==  --> 
 	<!-- 
@@ -284,10 +298,9 @@
 		and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 		</if>
     </select>
-    
-    
+     
     <!-- === #120. 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한것) === -->
-    <select id="boardListSearchWithPaging" parameterType="HashMap" resultType="com.spring.board.model.BoardVO"> 
+    <!-- <select id="boardListSearchWithPaging" parameterType="HashMap" resultType="com.spring.board.model.BoardVO"> 
     	select seq, fk_userid, name, subject, readCount, regDate, commentCount 
 		from 
 		(
@@ -302,8 +315,35 @@
 		</if>
 		) V 
 		where rno between #{startRno} and #{endRno}
-    </select>
+    </select> -->
     
+    <!-- === #148. 답변형 게시판의 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한것) === -->
+    <select id="boardListSearchWithPaging" parameterType="HashMap" resultType="com.spring.board.model.BoardVO"> 
+    	select seq, fk_userid, name, subject, readCount, regDate, commentCount  
+             , groupno, fk_seq, depthno
+        from 
+      (
+          select rownum AS rno
+               , seq, fk_userid, name, subject, readCount, regDate, commentCount  
+               , groupno, fk_seq, depthno 
+          from 
+          (
+              select seq, fk_userid, name, subject, readCount, 
+                     to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') AS regDate,
+                     commentCount, 
+                     groupno, fk_seq, depthno 
+              from tbl_board
+              where status = 1 
+              <if test='searchWord != ""'>
+            and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%' 
+            </if>
+              start with fk_seq = 0 
+              connect by prior seq = fk_seq    
+              order siblings by groupno desc, seq asc  
+          ) V 
+      ) T 
+      where rno between #{startRno} and #{endRno}
+    </select>
     
     <!-- === #131. 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리) === -->
     <select id="getCommentListPaging" parameterType="HashMap" resultType="com.spring.board.model.CommentVO"> 
@@ -323,6 +363,11 @@
     	select count(*) 
     	from tbl_comment
 		where status = 1 and parentSeq = #{parentSeq} 
+    </select>
+    
+    <select id="getGroupnoMax" resultType="int">
+    	select nvl(max(groupno), 0)
+    	from tbl_board
     </select>
     
 

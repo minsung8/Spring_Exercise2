@@ -1,5 +1,7 @@
 package com.spring.board.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 //=== #52. VO 생성하기
 //    먼저, 오라클에서 tbl_board 테이블을 생성해야 한다.
 public class BoardVO {
@@ -50,11 +52,24 @@ public class BoardVO {
      -- 답변글이 아닌 원글일 경우 0 을 가지도록 한다.
 	 */
 	
+	/*
+	 * === #152. 파일을 첨부하도록 VO 수정하기
+	 */
+	private MultipartFile attach;
+	// form 태그에서 type="file" 인 파일을 받아서 저장되는 필드이다. 진짜파일 ==> WAS(톰캣) 디스크에 저장됨.
+    // !!!!!! MultipartFile attach 는 오라클 데이터베이스 tbl_board 테이블의 컬럼이 아니다.!!!!!!  
+    // /Board/src/main/webapp/WEB-INF/views/tiles1/board/add.jsp 파일에서 input type="file" 인 name 의 이름(attach)과 
+    // 동일해야만 파일첨부가 가능해진다.!!!!
+	
+	private String fileName;
+	private String orgFilename;
+	private String fileSize;
 	
 	public BoardVO() {}
 	
 	public BoardVO(String seq, String fk_userid, String name, String subject, String content, String pw,
-			String readCount, String regDate, String status, String groupno, String fk_seq, String depthno) {
+			String readCount, String regDate, String status, String groupno, String fk_seq, String depthno
+			, String fileName, String orgFilename, String fileSize) {
 		this.seq = seq;
 		this.fk_userid = fk_userid;
 		this.name = name;
@@ -67,7 +82,9 @@ public class BoardVO {
 		this.groupno = groupno;
 		this.fk_seq = fk_seq;
 		this.depthno = depthno;
-		
+		this.fileName = fileName;
+		this.orgFilename = orgFilename;
+		this.fileSize = fileSize;
 	}
 
 	public String getGroupno() {

@@ -1,5 +1,6 @@
 package com.spring.board.controller;
 
+import java.io.File;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.common.MyUtil;
@@ -499,11 +502,46 @@ public class BoardController {
 	
 	// === #54. 게시판 글쓰기 완료 요청 === // 	
 	@RequestMapping(value="/addEnd.action", method= {RequestMethod.POST})
+	public String pointPlus_addEnd(Map<String,String> paraMap, BoardVO boardvo, MultipartHttpServletRequest mrequest) {	
 //	public String addEnd(BoardVO boardvo) {  <== After Advice 를 사용하기전 
-	
-	public String pointPlus_addEnd(Map<String,String> paraMap, BoardVO boardvo) {	
+	/*
+	 * #151. HttpServletRequest request
+	 * 
+      웹페이지에 요청 form이 enctype="multipart/form-data" 으로 되어있어서 Multipart 요청(파일처리 요청)이 들어올때 
+      컨트롤러에서는 HttpServletRequest 대신 MultipartHttpServletRequest 인터페이스를 사용해야 한다.
+     MultipartHttpServletRequest 인터페이스는 HttpServletRequest 인터페이스와  MultipartRequest 인터페이스를 상속받고있다.
+      즉, 웹 요청 정보를 얻기 위한 getParameter()와 같은 메소드와 Multipart(파일처리) 관련 메소드를 모두 사용가능하다.     
+   
+	 */
 	// <== #96. After Advice 를 사용하기 
 	    
+		MultipartFile attach = boardvo.getAttach();
+		
+		if ( !attach.isEmpty() ) {
+			/*
+			 * 1. 사용자가 보낸 첨부파일을 WAS의 특정 폴더에 저장해주어야 한다.
+			 * >> 파일이 업로드 되어질 특정 경로 지정해주기
+			 * 		우리는 WAS의 webapp/resources/files 라는 폴더로 지정
+			 * 		조심할 것은 
+			 */
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			System.out.println(root);
+			
+			
+			String path = root + "resources" + File.separator + "files";
+			/* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
+            운영체제가 Windows 이라면 File.separator 는  "\" 이고,
+            운영체제가 UNIX, Linux 이라면  File.separator 는 "/" 이다. 
+      */
+			// path가 첨부파일이 저장될 WAS의 폴더가 된다.
+			System.out.println(path);
+
+		}
+		
+		
+		
 		// == After Advice 를 사용하기 위해 파라미터를 생성하는 것임 ==
 		//    (글쓰기를 한 이후에 회원의 포인트를 100점 증가)
 		paraMap.put("fk_userid", boardvo.getFk_userid());

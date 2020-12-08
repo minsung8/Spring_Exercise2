@@ -50,8 +50,9 @@
 
 <div style="padding-left: 10%;">
  <h1>글쓰기</h1>
-
- <form name="addFrm"> 
+<!--  <form name="addFrm"> 
+ --><%-- #149. 파일첨부하기 --%>
+ <form name="addFrm" enctype="multipart/form-data"> 
       <table id="table">
          <tr>
             <th>성명</th>
@@ -72,6 +73,16 @@
                <textarea rows="10" cols="100" style="width: 95%; height: 412px;" name="content" id="content"></textarea>       
             </td>
          </tr>
+         
+         <%-- #150. 파일첨부 추가하기 --%>
+         <tr>
+            <th>파일첨부</th>
+            <td>
+               <input type="file" name="attach" />       
+            </td>
+         </tr>
+         
+         
          <tr>
             <th>글암호</th>
             <td>
@@ -80,10 +91,11 @@
          </tr>
       </table>
       
+      
       <!-- === #143. 답변글쓰기가 추가된 경우 === -->
-      <input type="hidden" name="fk_seq" value="${fk_seq}"/>
-      <input type="hidden" name="groupno" value="${groupno}"/>
-      <input type="hidden" name="depthno" value="${depthno}"/>
+      <input type="text" name="fk_seq" value="${fk_seq}"/>
+      <input type="text" name="groupno" value="${groupno}"/>
+      <input type="text" name="depthno" value="${depthno}"/>
 
       
       <div style="margin: 20px;">

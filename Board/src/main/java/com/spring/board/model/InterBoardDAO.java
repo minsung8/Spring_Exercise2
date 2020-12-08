@@ -71,6 +71,9 @@ public interface InterBoardDAO {
 
 	// 원게시물에 딸린 댓글 totalPage 알아오기 (Ajax 로 처리) 
 	int getCommentTotalCount(Map<String, String> paraMap);
+
+	// groupno 컬럼의 최대값 
+	int getGroupnoMax();
 	
 }
 

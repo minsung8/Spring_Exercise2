@@ -157,18 +157,33 @@
 					${boardvo.seq} 
 				</td>
 				<td align="left">
-				   <%--  === 댓글쓰기가 없는 게시판 ===
+				   <%--  === 댓글쓰기가 없는 게시판 시작 ===
 				   <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>
 				   --%>
 				   
-				   <%--  === 댓글쓰기가 있는 게시판 === --%>
-				   <c:if test="${boardvo.commentCount > 0}">
-				   <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject} <span style="vertical-align: super;">[<span style="color: red; font-size: 9pt; font-style: italic; font-weight: bold;">${boardvo.commentCount}</span>]</span> </span> 
+				   <%--  답변글이 아닌 원글인 경우 --%>
+				   <c:if test="${boardvo.depthno == 0}">
+					   <c:if test="${boardvo.commentCount > 0}">
+					   <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject} <span style="vertical-align: super;">[<span style="color: red; font-size: 9pt; font-style: italic; font-weight: bold;">${boardvo.commentCount}</span>]</span> </span> 
+					   </c:if>
+					   
+					   <c:if test="${boardvo.commentCount == 0}">
+					   <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>  
+					   </c:if>
 				   </c:if>
 				   
-				   <c:if test="${boardvo.commentCount == 0}">
-				   <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span>  
+				   <%--  답변글인 경우 --%>
+				   <c:if test="${boardvo.depthno > 0}">
+					   <c:if test="${boardvo.commentCount > 0}">
+					   <span class="subject" onclick="goView('${boardvo.seq}')"><span style="color:red; padding-left: ${boardvo.depthno * 20}px;">└RE&nbsp;${boardvo.subject}</span><span style="vertical-align: super;">[<span style="color: red; font-size: 9pt; font-style: italic; font-weight: bold;">${boardvo.commentCount}</span>]</span> </span> 
+					   </c:if>
+					   
+					   <c:if test="${boardvo.commentCount == 0}">
+					   <span class="subject" onclick="goView('${boardvo.seq}')"><span style="color:red; padding-left: ${boardvo.depthno * 20}px;">└RE&nbsp;${boardvo.subject}</span><span style="vertical-align: super;">[<span style="color: red; font-size: 9pt; font-style: italic; font-weight: bold;">${boardvo.commentCount}</span>]</span> </span> 
+					   </c:if>
 				   </c:if>
+				    <%--  === 댓글쓰기가 없는 게시판 끝 ===
+				   --%>
 				</td>
 				<td align="center">${boardvo.name}</td>
 				<td align="center">${boardvo.regDate}</td>
