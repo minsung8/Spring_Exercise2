@@ -50,8 +50,12 @@
 
 <div style="padding-left: 10%;">
  <h1>글쓰기</h1>
-<!--  <form name="addFrm"> 
- --><%-- #149. 파일첨부하기 --%>
+
+ <%-- <form name="addFrm"> --%>
+ <%-- === #149. 파일첨부하기 ===
+            먼저 위의 <form name="addFrm"> 을 주석처리 한 이후에 아래와 같이 해야 한다.
+      enctype="multipart/form-data" 를 해주어야만 파일첨부가 되어진다.       
+  --%>
  <form name="addFrm" enctype="multipart/form-data"> 
       <table id="table">
          <tr>
@@ -74,14 +78,13 @@
             </td>
          </tr>
          
-         <%-- #150. 파일첨부 추가하기 --%>
+         <%-- === #150. 파일첨부 타입 추가하기 === --%>
          <tr>
             <th>파일첨부</th>
             <td>
                <input type="file" name="attach" />       
             </td>
          </tr>
-         
          
          <tr>
             <th>글암호</th>
@@ -91,12 +94,10 @@
          </tr>
       </table>
       
-      
-      <!-- === #143. 답변글쓰기가 추가된 경우 === -->
-      <input type="text" name="fk_seq" value="${fk_seq}"/>
-      <input type="text" name="groupno" value="${groupno}"/>
-      <input type="text" name="depthno" value="${depthno}"/>
-
+      <%-- === #143. 답변글쓰기가 추가된 경우 === --%>
+      <input type="hidden" name="fk_seq"  value="${requestScope.fk_seq}" />
+      <input type="hidden" name="groupno" value="${requestScope.groupno}" />
+      <input type="hidden" name="depthno" value="${requestScope.depthno}" />
       
       <div style="margin: 20px;">
          <button type="button" id="btnWrite">쓰기</button>

@@ -25,9 +25,9 @@ public class MemberVO {
 	private int pwdchangegap;          // select용. 지금으로 부터 마지막으로 암호를 변경한지가 몇개월인지 알려주는 개월수(3개월 동안 암호를 변경 안 했을시 암호를 변경하라는 메시지를 보여주기 위함) 
 	private int lastlogingap;          // select용. 지금으로 부터 마지막으로 로그인한지가 몇개월인지 알려주는 개월수(12개월 동안 로그인을 안 했을 경우 해당 로그인계정을 비활성화 시키려고 함)  
 	
-	// #138. 답변글쓰기는 일반회원은 불가하고 직원들만 답변글쓰기가 가능하도록 하기위해서
-	//		tbl_member 테이블에 gradelevel이라는 칼럼출 추가한다.
-	private int gradelevel;
+	// #138. 먼저 답변글쓰기는 일반회원은 불가하고 직원(관리자)들만 답변글쓰기가 가능하도록 하기 위해서 
+	//       tbl_member 테이블에  gradelevel 이라는 컬럼을 추가해야 한다.
+	private int gradelevel;            // 등급레벨 
 	
 	/////////////////////////////////////////////////////////////////////
 	
@@ -39,14 +39,6 @@ public class MemberVO {
 	
 	public MemberVO() {}
 	
-	public int getGradelevel() {
-		return gradelevel;
-	}
-
-	public void setGradelevel(int gradelevel) {
-		this.gradelevel = gradelevel;
-	}
-
 	public MemberVO(String userid, String pwd, String name, String email, String mobile, String postcode,
 			String address, String detailaddress, String extraaddress) {
 		this.userid = userid;
@@ -239,7 +231,14 @@ public class MemberVO {
 		this.requirePwdChange = requirePwdChange;
 	}
 	
-	
+	public int getGradelevel() {
+		return gradelevel;
+	}
+
+	public void setGradelevel(int gradelevel) {
+		this.gradelevel = gradelevel;
+	}
+
 	public int getAge() {
 		int age = 0;
 		

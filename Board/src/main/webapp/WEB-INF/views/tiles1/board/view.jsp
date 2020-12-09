@@ -66,7 +66,6 @@
 				}
 				
 				$("input#commentContent").val("");
-				
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -186,100 +185,99 @@
 				    if(typeof currentShowPageNo == "string") {
 				    	currentShowPageNo = Number(currentShowPageNo);
 				    }
-					
-				 // *** !! 다음은 currentShowPageNo 를 얻어와서 pageNo 를 구하는 공식이다. !! *** //
-	                var pageNo = Math.floor( (currentShowPageNo - 1)/blockSize ) * blockSize + 1;
-	               /*  currentShowPageNo 가 2페이지 이라면 pageNo 는 1이 되어야 한다.
-	                   Math.floor((2 - 1)/10)*10 + 1 
-	                   ==>  Math.floor((1)/10)*10 + 1  
-	                   ==>  Math.floor(0.1)*10 + 1   // 소수부가 있을시 Math.floor(0.1) 은  0.1 보다 작은 최대의 정수인 0을 나타낸다.  
-	                   ==>   0*10+1  
-	                   ==>   1
-	                   
-	                   currentShowPageNo 가 11페이지 이라면 pageNo 는 11이 되어야 한다.
-	                   Math.floor((11 - 1)/10)*10 + 1 
-	                   ==>  Math.floor((10)/10)*10 + 1  
-	                   ==>  Math.floor(1)*10 + 1   // 소수부가 없을시 Math.floor(1) 은  그대로 1 이 된다.  
-	                   ==>   1*10+1  
-	                   ==>   11
-	                   
-	                   currentShowPageNo 가 20페이지 이라면 pageNo 는 11이 되어야 한다.
-	                   Math.floor((20 - 1)/10)*10 + 1 
-	                   ==>  Math.floor((19)/10)*10 + 1  
-	                   ==>  Math.floor(1.9)*10 + 1   // 소수부가 있을시 Math.floor(1.9) 은  1.9 보다 작은 최대의 정수인 1을 나타낸다.  
-	                   ==>   1*10+1  
-	                   ==>   11
-	                
-
-	               /*
-	                   1  2  3  4  5  6  7  8  9  10  -- 첫번째 블럭의 페이지번호 시작값(pageNo)은 1 이다.
-	                   11 12 13 14 15 16 17 18 19 20  -- 두번째 블럭의 페이지번호 시작값(pageNo)은 11 이다.
-	                   21 22 23 24 25 26 27 28 29 30  -- 세번째 블럭의 페이지번호 시작값(pageNo)은 21 이다.
-	                   
-	                   currentShowPageNo         pageNo
-	                  ----------------------------------
-	                        1                      1 = ((1 - 1)/10) * 10 + 1
-	                        2                      1 = ((2 - 1)/10) * 10 + 1
-	                        3                      1 = ((3 - 1)/10) * 10 + 1
-	                        4                      1
-	                        5                      1
-	                        6                      1
-	                        7                      1 
-	                        8                      1
-	                        9                      1
-	                        10                     1 = ((10 - 1)/10) * 10 + 1
-	                       
-	                        11                    11 = ((11 - 1)/10) * 10 + 1
-	                        12                    11 = ((12 - 1)/10) * 10 + 1
-	                        13                    11 = ((13 - 1)/10) * 10 + 1
-	                        14                    11
-	                        15                    11
-	                        16                    11
-	                        17                    11
-	                        18                    11 
-	                        19                    11 
-	                        20                    11 = ((20 - 1)/10) * 10 + 1
-	                        
-	                        21                    21 = ((21 - 1)/10) * 10 + 1
-	                        22                    21 = ((22 - 1)/10) * 10 + 1
-	                        23                    21 = ((23 - 1)/10) * 10 + 1
-	                        ..                    ..
-	                        29                    21
-	                        30                    21 = ((30 - 1)/10) * 10 + 1
-	               */
-	                  
-	               // === [맨처음][이전] 만들기 === 
-	               if(pageNo != 1) {
-	                  pageBarHTML += "<li style='display:inline-block; width:60px; font-size:12pt;'><a href='javascript:goViewComment(\"1\")'>[맨처음]</a></li>"; 
-	                  pageBarHTML += "<li style='display:inline-block; width:50px; font-size:11pt;'><a href='javascript:goViewComment(\""+(pageNo-1)+"\")'>[이전]</a></li>";
-	               }
-	                  
-	               while( !(loop > blockSize || pageNo > totalPage) ) {
-	                  
-	                  if(pageNo == currentShowPageNo) {
-	                     pageBarHTML += "<li style='display:inline-block; width:30px; font-size:11pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</li>";
-	                  }
-	                  else {
-	                     pageBarHTML += "<li style='display:inline-block; width:30px; font-size:11pt;'><a href='javascript:goViewComment(\""+pageNo+"\")'>"+pageNo+"</a></li>";
-	                  }
-	                  
-	                  loop++;
-	                  pageNo++;
-	                  
-	               }// end of while------------------------------
-	                  
-	                  
-	               // === [다음][마지막] 만들기 ===
-	               if( !(pageNo > totalPage) ) {
-	                  pageBarHTML += "<li style='display:inline-block; width:50px; font-size:11pt;'><a href='javascript:goViewComment(\""+pageNo+"\")'>[다음]</a></li>";
-	                  pageBarHTML += "<li style='display:inline-block; width:60px; font-size:11pt;'><a href='javascript:goViewComment(\""+totalPage+"\")'>[마지막]</a></li>";
-	               }
-	               
-	               pageBarHTML += "</ul>";
-	                  
-	               $("div#pageBar").html(pageBarHTML);
 				    
-				}				
+				    // *** !! 다음은 currentShowPageNo 를 얻어와서 pageNo 를 구하는 공식이다. !! *** //
+				    var pageNo = Math.floor( (currentShowPageNo - 1)/blockSize ) * blockSize + 1;
+					/*  currentShowPageNo 가 2페이지 이라면 pageNo 는 1이 되어야 한다.
+					    Math.floor((2 - 1)/10)*10 + 1 
+					    ==>  Math.floor((1)/10)*10 + 1  
+					    ==>  Math.floor(0.1)*10 + 1   // 소수부가 있을시 Math.floor(0.1) 은  0.1 보다 작은 최대의 정수인 0을 나타낸다.  
+					    ==>   0*10+1  
+					    ==>   1
+					    
+					    currentShowPageNo 가 11페이지 이라면 pageNo 는 11이 되어야 한다.
+					    Math.floor((11 - 1)/10)*10 + 1 
+					    ==>  Math.floor((10)/10)*10 + 1  
+					    ==>  Math.floor(1)*10 + 1   // 소수부가 없을시 Math.floor(1) 은  그대로 1 이 된다.  
+					    ==>   1*10+1  
+					    ==>   11
+					    
+					    currentShowPageNo 가 20페이지 이라면 pageNo 는 11이 되어야 한다.
+					    Math.floor((20 - 1)/10)*10 + 1 
+					    ==>  Math.floor((19)/10)*10 + 1  
+					    ==>  Math.floor(1.9)*10 + 1   // 소수부가 있을시 Math.floor(1.9) 은  1.9 보다 작은 최대의 정수인 1을 나타낸다.  
+					    ==>   1*10+1  
+					    ==>   11
+				    */
+
+					/*
+					    1  2  3  4  5  6  7  8  9  10  -- 첫번째 블럭의 페이지번호 시작값(pageNo)은 1 이다.
+					    11 12 13 14 15 16 17 18 19 20  -- 두번째 블럭의 페이지번호 시작값(pageNo)은 11 이다.
+					    21 22 23 24 25 26 27 28 29 30  -- 세번째 블럭의 페이지번호 시작값(pageNo)은 21 이다.
+					    
+					    currentShowPageNo         pageNo
+					   ----------------------------------
+					         1                      1 = ((1 - 1)/10) * 10 + 1
+					         2                      1 = ((2 - 1)/10) * 10 + 1
+					         3                      1 = ((3 - 1)/10) * 10 + 1
+					         4                      1
+					         5                      1
+					         6                      1
+					         7                      1 
+					         8                      1
+					         9                      1
+					         10                     1 = ((10 - 1)/10) * 10 + 1
+					        
+					         11                    11 = ((11 - 1)/10) * 10 + 1
+					         12                    11 = ((12 - 1)/10) * 10 + 1
+					         13                    11 = ((13 - 1)/10) * 10 + 1
+					         14                    11
+					         15                    11
+					         16                    11
+					         17                    11
+					         18                    11 
+					         19                    11 
+					         20                    11 = ((20 - 1)/10) * 10 + 1
+					         
+					         21                    21 = ((21 - 1)/10) * 10 + 1
+					         22                    21 = ((22 - 1)/10) * 10 + 1
+					         23                    21 = ((23 - 1)/10) * 10 + 1
+					         ..                    ..
+					         29                    21
+					         30                    21 = ((30 - 1)/10) * 10 + 1
+					*/
+						
+					// === [맨처음][이전] 만들기 === 
+					if(pageNo != 1) {
+						pageBarHTML += "<li style='display:inline-block; width:60px; font-size:12pt;'><a href='javascript:goViewComment(\"1\")'>[맨처음]</a></li>"; 
+						pageBarHTML += "<li style='display:inline-block; width:50px; font-size:11pt;'><a href='javascript:goViewComment(\""+(pageNo-1)+"\")'>[이전]</a></li>";
+					}
+						
+					while( !(loop > blockSize || pageNo > totalPage) ) {
+						
+						if(pageNo == currentShowPageNo) {
+							pageBarHTML += "<li style='display:inline-block; width:30px; font-size:11pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</li>";
+						}
+						else {
+							pageBarHTML += "<li style='display:inline-block; width:30px; font-size:11pt;'><a href='javascript:goViewComment(\""+pageNo+"\")'>"+pageNo+"</a></li>";
+						}
+						
+						loop++;
+						pageNo++;
+						
+					}// end of while------------------------------
+						
+						
+					// === [다음][마지막] 만들기 ===
+					if( !(pageNo > totalPage) ) {
+						pageBarHTML += "<li style='display:inline-block; width:50px; font-size:11pt;'><a href='javascript:goViewComment(\""+pageNo+"\")'>[다음]</a></li>";
+						pageBarHTML += "<li style='display:inline-block; width:60px; font-size:11pt;'><a href='javascript:goViewComment(\""+totalPage+"\")'>[마지막]</a></li>";
+					}
+					
+					pageBarHTML += "</ul>";
+						
+					$("div#pageBar").html(pageBarHTML);
+				}
 				
 			},
 			error: function(request, status, error){
@@ -357,9 +355,9 @@
 	<button type="button" onclick="javascript:location.href='<%= request.getContextPath()%>/edit.action?seq=${boardvo.seq}'">수정</button>
 	<button type="button" onclick="javascript:location.href='<%= request.getContextPath()%>/del.action?seq=${boardvo.seq}'">삭제</button>
 
-	<!-- #141. 어떤 글에 대한 답변 글쓰기는 로그인 되어진 회원의 gradelevel 10인 직원들만 가능-->
-	<c:if test="${loginuser.gradelevel == 10 }">
-	<button type="button" onclick="javascript:location.href='<%= request.getContextPath()%>/add.action?seq=${boardvo.seq}&groupno=${groupno}&depthno=${depthno}'">답변글쓰기</button>
+    <%-- === #141. 어떤글에 대한 답변글쓰기는 로그인 되어진 회원의 gradelevel 컬럼의 값이 10 인 직원들만 답변글쓰기가 가능하다 --%>
+    <c:if test="${sessionScope.loginuser.gradelevel == 10}">
+    	<button type="button" onclick="javascript:location.href='<%= request.getContextPath()%>/add.action?fk_seq=${boardvo.seq}&groupno=${boardvo.groupno}&depthno=${boardvo.depthno}'">답변글쓰기</button>
 	</c:if>
 
 	<%-- === #83. 댓글쓰기 폼 추가 === --%>
@@ -394,7 +392,7 @@
 	
 	
 	<%-- ==== #136. 댓글 페이지바 ==== --%>
-	<div id="pageBar" style="border:solid 0px gray; width: 70%; margin: 10px auto; text-align: center;"></div>
+	<div id="pageBar" style="border:solid 0px gray; width: 90%; margin: 10px auto; text-align: center;"></div>
 	
 </div>    
 

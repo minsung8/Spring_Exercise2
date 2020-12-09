@@ -243,11 +243,20 @@ public class BoardDAO implements InterBoardDAO {
 		return totalCount;
 	}
 
-	// === #145.tbl_board에서  groupno 컬럼의 최대값 구하기
+
+	// === #145. tbl_board 테이블에서 groupno 컬럼의 최대값 구하기 === //
 	@Override
 	public int getGroupnoMax() {
 		int max = sqlsession.selectOne("board.getGroupnoMax");
 		return max;
+	}
+
+
+	// === #158. 글쓰기(파일첨부가 있는 글쓰기) === // 
+	@Override
+	public int add_withFile(BoardVO boardvo) {
+		int n = sqlsession.insert("board.add_withFile", boardvo);
+		return n;
 	}
 	
 	
