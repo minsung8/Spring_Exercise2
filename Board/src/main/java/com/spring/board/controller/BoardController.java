@@ -1,6 +1,8 @@
 package com.spring.board.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -1048,9 +1050,28 @@ public class BoardController {
 		paraMap.put("seq", seq);
 		paraMap.put("pw", pw);
 		
+		BoardVO boardvo = service.getViewWithNoAddCount(seq);
+		
+		if ( boardvo.getFileName() != null ) {
+			FileManager filemanager = new FileManager();
+			
+			HttpSession session = request.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			System.out.println("~~~~ webapp 의 절대경로 => " + root);
+			// ~~~~ webapp 의 절대경로 => C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\
+			
+			String path = root+"resources"+ File.separator +"files";
+			try {
+				filemanager.doFileDelete(boardvo.getFileName(), path);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		int n = service.del(paraMap); 
 		// n 이 1 이라면 정상적으로 삭제됨.
-		// n 이 0 이라면 글삭제에 필요한 글암호가 틀린경우  
+		// n 이 0 이라면 글삭제에 필요한 글암호가 틀린경우 
 		
 		if(n == 0) {
 			mav.addObject("message", "암호가 일치하지 않아 글 삭제가 불가합니다.");
@@ -1245,6 +1266,73 @@ public class BoardController {
 		jsonObj.put("totalPage", totalPage);  // {"totalPage":3}
 				
 		return jsonObj.toString();
+	}
+	
+	// === #163. 첨부파일 다운로드 받기 === //
+	@RequestMapping(value="/download.action")
+	public void requiredLogin_download(HttpServletRequest request, HttpServletResponse response) {
+		
+		String seq = request.getParameter("seq");
+		// 첨부파일이 있는 글번호 
+		
+		/*
+		 	2020120914115218673139585400.gif 처럼
+		 	이러한 fileName 값을 DB에서 가져와야 한다.
+		 	또한 orgFilename 값도 DB에서 가져와야 한다.
+		 */
+		response.setContentType("text/html; charset=UTF-8");
+		PrintWriter writer = null;
+		
+		try {
+			Integer.parseInt(seq);
+			BoardVO boardvo = service.getViewWithNoAddCount(seq);
+			String fileName = boardvo.getFileName();	// WAS 디스크에 저장된 파일명
+			String orgFilename = boardvo.getOrgFilename();		// 다운로드시 보여줄 파일명
+			
+			// 첨부파일이 저장되어 있는 
+		    // WAS(톰캣)의 디스크 경로명을 알아와야만 다운로드를 해줄수 있다. 
+		    // 이 경로는 우리가 파일첨부를 위해서
+		    //    /addEnd.action 에서 설정해두었던 경로와 똑같아야 한다.
+		    // WAS 의 webapp 의 절대경로를 알아와야 한다. 
+			
+			// WAS의 webapp 의 절대경로를 알아와야 한다.
+			HttpSession session = request.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			System.out.println("~~~~ webapp 의 절대경로 => " + root);
+			// ~~~~ webapp 의 절대경로 => C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\
+			
+			String path = root+"resources"+ File.separator +"files";
+			/* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
+		              운영체제가 Windows 이라면 File.separator 는  "\" 이고,
+		              운영체제가 UNIX, Linux 이라면  File.separator 는 "/" 이다. 
+		    */
+			
+			boolean flag = false;
+			flag = fileManager.doFileDownload(fileName, orgFilename, path, response);
+			
+			if (!flag) {
+				// 다운로드가 실패할 경우 메세지를 띄워준다.
+
+				try {
+					writer = response.getWriter();
+					writer.println("<script type='text/javascript'>alert('파일다운로드가 불가합니다!'); history.back();</script>");
+
+				} catch (IOException e) {}
+
+			}
+			
+		} catch (NumberFormatException e) {
+			try {
+				writer = response.getWriter();
+				// 웹브라우저상에 메세지를 쓰기 위한 객체 생성
+				
+				writer.println("<script type='text/javascript'>alert('파일다운로드가 불가합니다!'); history.back();</script>");
+			} catch (IOException e1) {
+				
+			}
+		}
+		
 	}
 	
 	
