@@ -3,6 +3,10 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+
 <style type="text/css">
 	table, th, td, input, textarea {border: solid gray 1px;}
 	
@@ -343,15 +347,15 @@
 
 			<tr>
 				<th>파일크기(bytes)</th>
-				<td>${boardvo.fileSize}</td>
+				<fmt:formatNumber value="${boardvo.fileSize}" pattern="#,###" />
 			</tr>
 			
 		</table>
 		
 		<br/>
-		
-		<div style="margin-bottom: 1%;">이전글&nbsp;:&nbsp;<span class="move" onclick="javascript:location.href='view.action?seq=${boardvo.previousseq}'">${boardvo.previoussubject}</span></div>
-		<div style="margin-bottom: 1%;">다음글&nbsp;:&nbsp;<span class="move" onclick="javascript:location.href='view.action?seq=${boardvo.nextseq}'">${boardvo.nextsubject}</span></div>
+		<c:set var="gobackURL2" value='${ fn:replace(gobackURL, "&" ," ") }' />
+		<div style="margin-bottom: 1%;">이전글&nbsp;:&nbsp;<span class="move" onclick="javascript:location.href='view.action?seq=${boardvo.previousseq}&gobackURL=${gobackURL2}'">${boardvo.previoussubject}</span></div>
+		<div style="margin-bottom: 1%;">다음글&nbsp;:&nbsp;<span class="move" onclick="javascript:location.href='view.action?seq=${boardvo.nextseq}&gobackURL=${gobackURL2}'">${boardvo.nextsubject}</span></div>
 	
     </c:if> 
 	
