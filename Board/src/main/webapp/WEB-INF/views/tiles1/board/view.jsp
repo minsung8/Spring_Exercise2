@@ -6,16 +6,15 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-
 <style type="text/css">
 	table, th, td, input, textarea {border: solid gray 1px;}
 	
 	#table, #table2 {border-collapse: collapse;
-	 		         width: 900px;
+	 		         width: 1024px;
 	 		        }
 	#table th, #table td{padding: 5px;}
 	#table th{width: 120px; background-color: #DDDDDD;}
-	#table td{width: 750px;}
+	#table td{width: 880px;}
 	.long {width: 470px;}
 	.short {width: 120px;}
 	
@@ -39,7 +38,7 @@
 		                    ,function(){
 		                       $(this).removeClass("moveColor");
 		                    });
-		
+
 	}); // end of $(document).ready(function(){})----------------
 	
 	
@@ -332,29 +331,29 @@
 				<td>${boardvo.regDate}</td>
 			</tr>
 			
-			<%-- #162. 첨부파일 이름 및 파일크기를 보여주고 첨부파일을 다운로드 되도록 만들기 --%>
+			<%-- === #162. 첨부파일 이름 및 파일크기를 보여주고 첨부파일을 다운로드 되도록 만들기 === --%>
 			<tr>
 				<th>첨부파일</th>
 				<td>
-					<c:if test="${ sessionScope.loginuser != null}">
-						<a href="<%= request.getContextPath() %>/download.action?seq=${boardvo.seq}">${boardvo.orgFilename}</a>
+					<c:if test="${sessionScope.loginuser != null}">
+						<a href="<%= request.getContextPath()%>/download.action?seq=${boardvo.seq}">${boardvo.orgFilename}</a> 
 					</c:if>
-					<c:if test="${ sessionScope.loginuser == null}">
+					<c:if test="${sessionScope.loginuser == null}">
 						${boardvo.orgFilename}
 					</c:if>
 				</td>
 			</tr>
-
 			<tr>
 				<th>파일크기(bytes)</th>
-				<fmt:formatNumber value="${boardvo.fileSize}" pattern="#,###" />
+				<td><fmt:formatNumber value="${boardvo.fileSize}" pattern="#,###" /></td>
 			</tr>
 			
 		</table>
 		
 		<br/>
+		
 		<c:set var="gobackURL2" value='${ fn:replace(gobackURL, "&" ," ") }' />
-		<div style="margin-bottom: 1%;">이전글&nbsp;:&nbsp;<span class="move" onclick="javascript:location.href='view.action?seq=${boardvo.previousseq}&gobackURL=${gobackURL2}'">${boardvo.previoussubject}</span></div>
+		<div style="margin-bottom: 1%;">이전글&nbsp;:&nbsp;<span class="move" onclick="javascript:location.href='view.action?seq=${boardvo.previousseq}&gobackURL=${gobackURL2}'">${boardvo.previoussubject}</span></div> 
 		<div style="margin-bottom: 1%;">다음글&nbsp;:&nbsp;<span class="move" onclick="javascript:location.href='view.action?seq=${boardvo.nextseq}&gobackURL=${gobackURL2}'">${boardvo.nextsubject}</span></div>
 	
     </c:if> 

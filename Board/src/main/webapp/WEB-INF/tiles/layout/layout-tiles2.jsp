@@ -5,7 +5,7 @@
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 
 <%
-   String ctxPath = request.getContextPath();
+	String ctxPath = request.getContextPath();
 %>    
     
 <!DOCTYPE html>
@@ -21,22 +21,22 @@
   <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/style2.css" />
 </head>
 <body>
-   <div id="mycontainer">
-      <div id="myheader">
-         <tiles:insertAttribute name="header" />
-      </div>
-      
-      <div id="mycontent">
-         <tiles:insertAttribute name="content" />
-      </div>
-      
-      <div id="mysideinfo">
-         <tiles:insertAttribute name="sideinfo" />
-      </div>
-      
-      <div id="myfooter">
-         <tiles:insertAttribute name="footer" />
-      </div>
-   </div>
+	<div id="mycontainer">
+		<div id="myheader">
+			<tiles:insertAttribute name="header" />
+		</div>
+		
+		<div id="mycontent">
+			<tiles:insertAttribute name="content" />
+		</div>
+		
+		<div id="mysideinfo">
+			<tiles:insertAttribute name="sideinfo" />
+		</div>
+		
+		<div id="myfooter">
+			<tiles:insertAttribute name="footer" />
+		</div>
+	</div>
 </body>
 </html>    

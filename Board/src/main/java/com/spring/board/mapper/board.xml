@@ -11,12 +11,14 @@
 		values(101, '서영학', default)
 	</insert>
 	
+	
 	<!--  !!!! 주의해야할 사항은 리턴타입이 List<E> 이더라도 resultType 은 E 으로 해야만 한다. !!!! -->
 	<select id="test_select" resultType="com.spring.board.model.TestVO" >
 		select no, name, to_char(writeday, 'yyyy-mm-dd hh24:mi:ss') AS writeday 
 		from spring_test 
 		order by writeday asc
 	</select>
+	
 	
 	<!-- #### 중요 #### 
 		 HashMap 타입으로 매개변수를 받아온 것을 꺼내서 사용할때 
@@ -87,7 +89,7 @@
 		select userid, name, email, mobile, postcode, address, detailaddress, extraaddress, gender
 		     , substr(birthday,1,4) as birthyyyy, substr(birthday,6,2) as birthmm, substr(birthday,9) as birthdd
 		     , coin, point, to_char(registerday,'yyyy-mm-dd') as registerday
-		     , trunc( months_between(sysdate, lastpwdchangeddate) ) as pwdchangegap
+		     , trunc( months_between(sysdate, lastpwdchangedate) ) as pwdchangegap
 		     , gradelevel 
 		from tbl_member
 		where status = 1 and userid = #{userid} and pwd = #{pwd} 
@@ -187,7 +189,8 @@
 	<!--  == #140. (댓글 및 답변글 쓰기 게시판에서) 글 1개 보여주기  == 
 	                  먼저 위의 #67 을 주석처리 한 다음에 아래와 같이 한다.
 	-->
-<!-- 	<select id="getView" parameterType="String" resultType="com.spring.board.model.BoardVO">
+	<!--
+	<select id="getView" parameterType="String" resultType="com.spring.board.model.BoardVO">
 		select previousseq, previoussubject
 		     , seq, fk_userid, name, subject, content, readCount, regDate
 		     , nextseq, nextsubject
@@ -208,8 +211,10 @@
 		    where status = 1
 		) V 
 		where V.seq = #{seq}		
-	</select> -->
-
+	</select>
+	-->
+	
+	
 	<!--  == #161. (댓글 및 답변글 쓰기 및 파일첨부가 있는 게시판에서) 글 1개 보여주기  == 
 	                  먼저 위의 #140 을 주석처리 한 다음에 아래와 같이 한다.
 	-->
@@ -218,7 +223,7 @@
 		     , seq, fk_userid, name, subject, content, readCount, regDate
 		     , nextseq, nextsubject
 		     , groupno, fk_seq, depthno 
-		     , fileName, orgFilename, fileSize
+		     , fileName, orgFilename, fileSize 
 		from 
 		(
 		    select   lag(seq,1) over(order by seq desc) AS previousseq 
@@ -230,13 +235,15 @@
 		           , lead(seq,1) over(order by seq desc) AS nextseq 
 		           , lead(subject,1) over(order by seq desc) AS nextsubject
 		           
-		           , groupno, fk_seq, depthno 
-		           , fileName, orgFilename, fileSize
+		           , groupno, fk_seq, depthno
+		           , fileName, orgFilename, fileSize 
 		    from tbl_board
 		    where status = 1
 		) V 
 		where V.seq = #{seq}		
-	</select>
+	</select>	
+
+
     <!-- == #75. 1개글 수정하기 == -->
     <update id="edit" parameterType="com.spring.board.model.BoardVO">
     	update tbl_board set subject = #{subject}

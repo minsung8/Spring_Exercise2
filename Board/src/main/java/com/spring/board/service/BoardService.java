@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.board.common.AES256;
+import com.spring.board.common.FileManager;
 import com.spring.board.model.BoardVO;
 import com.spring.board.model.CommentVO;
 import com.spring.board.model.InterBoardDAO;
@@ -39,7 +40,7 @@ public class BoardService implements InterBoardService {
 	// Type 에 따라 Spring 컨테이너가 알아서 bean 으로 등록된 com.spring.model.BoardDAO 의 bean 을  dao 에 주입시켜준다. 
     // 그러므로 dao 는 null 이 아니다.
 
-
+	
 	// === #45. 양방향 암호화 알고리즘인 AES256 를 사용하여 복호화 하기 위한 클래스 의존객체 주입하기(DI: Dependency Injection) ===
 	@Autowired
 	private AES256 aes;
@@ -47,6 +48,8 @@ public class BoardService implements InterBoardService {
     // 그러므로 aes 는 null 이 아니다.
 	// com.spring.board.common.AES256 의 bean 은 /webapp/WEB-INF/spring/appServlet/servlet-context.xml 파일에서 bean 으로 등록시켜주었음.  
 	
+	@Autowired     // Type에 따라 알아서 Bean 을 주입해준다.
+	private FileManager fileManager;
 	
 	// model단(BoardDAO)에 존재하는 메소드( test_insert() )를 호출 한다.
 	@Override
@@ -204,7 +207,22 @@ public class BoardService implements InterBoardService {
 	// === #78. 1개글 삭제하기 === //
 	@Override
 	public int del(Map<String, String> paraMap) {
+		
 		int n = dao.del(paraMap);
+		
+		// === #165. 파일첨부가 된 글이라면 DB에서 글 삭제가 성공된 후 첨부파일을 삭제해주어야 한다. === //
+		if(n==1) {
+			String fileName = paraMap.get("fileName");
+			String path = paraMap.get("path");
+			
+			if( fileName != null && !"".equals(fileName) ) {
+				try {
+					fileManager.doFileDelete(fileName, path);
+				} catch (Exception e) {	}
+			}
+		}
+        ///////////////////////////////////////////////////////////////////
+		
 		return n;
 	}
 
