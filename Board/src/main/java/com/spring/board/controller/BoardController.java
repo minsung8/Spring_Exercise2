@@ -1412,6 +1412,13 @@ public class BoardController {
    
   }	
 	
+   
+    //=== #173. (웹채팅관련4) ===
+  	@RequestMapping(value="/chatting/multichat.action", method= {RequestMethod.GET}) 
+  	public String requiredLogin_multichat(HttpServletRequest request, HttpServletResponse response) { 
+  		
+  		return "chatting/multichat.tiles1";
+  	}  
 	
 }
 

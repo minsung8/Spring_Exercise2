@@ -77,6 +77,12 @@ public interface InterBoardDAO {
 
 	// 글쓰기(파일첨부가 있는 글쓰기)
 	int add_withFile(BoardVO boardvo);
+
+	
+	// === #185. Spring Scheduler(스프링스케줄러)7. 
+    // === Spring Scheduler(스프링 스케줄러)를 사용한 email 발송하기 === 
+	List<Map<String, String>> getReservationList();
+	void updateMailSendCheck(Map<String, String[]> paraMap);
 	
 }
 

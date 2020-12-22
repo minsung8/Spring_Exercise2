@@ -258,6 +258,21 @@ public class BoardDAO implements InterBoardDAO {
 		int n = sqlsession.insert("board.add_withFile", boardvo);
 		return n;
 	}
+
+
+	// === #186. Spring Scheduler(스프링스케줄러)8. 
+	// === Spring Scheduler(스프링 스케줄러)를 사용한 email 발송하기 === 
+	@Override
+	public List<Map<String, String>> getReservationList() {
+		List<Map<String, String>> reservationList = sqlsession.selectList("board.getReservationList");
+		return reservationList;
+	}
+
+	// === Spring Scheduler(스프링 스케줄러)를 사용한 email 발송하기 === 
+	@Override
+	public void updateMailSendCheck(Map<String, String[]> paraMap) {
+		sqlsession.update("board.updateMailSendCheck", paraMap);
+	}
 	
 	
 	
